@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieSelection.Client", "MovieSelection.Client\MovieSelection.Client.csproj", "{5C4EA542-7140-439A-979F-24E48022EB7F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieSelection.Identity", "MovieSelection.Identity\MovieSelection.Identity.csproj", "{FB96DA2F-AF3E-4EA8-B8E4-2BCDF3155333}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C4EA542-7140-439A-979F-24E48022EB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C4EA542-7140-439A-979F-24E48022EB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C4EA542-7140-439A-979F-24E48022EB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C4EA542-7140-439A-979F-24E48022EB7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB96DA2F-AF3E-4EA8-B8E4-2BCDF3155333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB96DA2F-AF3E-4EA8-B8E4-2BCDF3155333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB96DA2F-AF3E-4EA8-B8E4-2BCDF3155333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB96DA2F-AF3E-4EA8-B8E4-2BCDF3155333}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F4C9FC8-C31C-403D-B460-EA92C6B36D59}
+	EndGlobalSection
+EndGlobal

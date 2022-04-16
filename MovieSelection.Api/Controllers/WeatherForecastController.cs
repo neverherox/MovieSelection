@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MovieSelection.Api.Controllers;
 
+[Authorize(Roles = "user")]
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]

@@ -4,7 +4,7 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
-using IdentityServer4;
+using IdentityModel;
 
 namespace MovieSelection.Identity
 {
@@ -14,7 +14,7 @@ namespace MovieSelection.Identity
                    new IdentityResource[]
                    {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
+                new ProfileWithRoleIdentityResource()
                    };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -26,7 +26,7 @@ namespace MovieSelection.Identity
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
-                new ApiResource("movieSelectionApi", "The MovieSelection API")
+                new ApiResource("movieSelectionApi", "The MovieSelection API", new[] { JwtClaimTypes.Role })
                 {
                     Scopes = { "movieSelectionApi" }
                 }
@@ -52,5 +52,14 @@ namespace MovieSelection.Identity
                     PostLogoutRedirectUris = { "https://localhost:5020/authentication/logout-callback" }
                 },
             };
+    }
+
+    public class ProfileWithRoleIdentityResource
+        : IdentityResources.Profile
+    {
+        public ProfileWithRoleIdentityResource()
+        {
+            this.UserClaims.Add(JwtClaimTypes.Role);
+        }
     }
 }

@@ -55,6 +55,7 @@ namespace MovieSelection.Identity
                             new Claim(JwtClaimTypes.Name, "Alice Smith"),
                             new Claim(JwtClaimTypes.GivenName, "Alice"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                            new Claim(JwtClaimTypes.Role, "user"),
                             new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
                         }).Result;
                         if (!result.Succeeded)
@@ -87,6 +88,8 @@ namespace MovieSelection.Identity
                             new Claim(JwtClaimTypes.Name, "Bob Smith"),
                             new Claim(JwtClaimTypes.GivenName, "Bob"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
+                            new Claim(JwtClaimTypes.Role, "admin"),
+                            new Claim(JwtClaimTypes.Role, "user"),
                             new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
                             new Claim("location", "somewhere")
                         }).Result;

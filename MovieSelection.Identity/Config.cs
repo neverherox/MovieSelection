@@ -20,8 +20,16 @@ namespace MovieSelection.Identity
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("scope1"),
-                new ApiScope("scope2"),
+                new ApiScope("movieSelectionApi", "The MovieSelection API")
+            };
+
+        public static IEnumerable<ApiResource> ApiResources =>
+            new ApiResource[]
+            {
+                new ApiResource("movieSelectionApi", "The MovieSelection API")
+                {
+                    Scopes = { "movieSelectionApi" }
+                }
             };
 
         public static IEnumerable<Client> Clients =>
@@ -36,8 +44,9 @@ namespace MovieSelection.Identity
                     AllowedCorsOrigins = { "https://localhost:5020" },
                     AllowedScopes =
                     {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        "openid",
+                        "profile",
+                        "movieSelectionApi"
                     },
                     RedirectUris = { "https://localhost:5020/authentication/login-callback" },
                     PostLogoutRedirectUris = { "https://localhost:5020/authentication/logout-callback" }

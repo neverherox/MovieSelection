@@ -48,7 +48,6 @@ namespace MovieSelection.Identity
                 options.Events.RaiseSuccessEvents = true;
                 options.EmitStaticAudienceClaim = true; // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
             })
-                .AddTestUsers(TestUsers.Users)
                 .AddConfigurationStore<ApplicationDbContext>(options =>
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(connectionString);
@@ -123,6 +122,14 @@ namespace MovieSelection.Identity
                 {
                     foreach (var resource in Config.ApiScopes)
                         context.ApiScopes.Add(resource.ToEntity());
+
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in Config.ApiResources)
+                        context.ApiResources.Add(resource.ToEntity());
 
                     context.SaveChanges();
                 }

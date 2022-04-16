@@ -30,12 +30,11 @@ app.UseCors(config =>
     config.AllowAnyMethod();
     config.AllowAnyHeader();
 });
-app.UseRouting();
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseRouting();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {

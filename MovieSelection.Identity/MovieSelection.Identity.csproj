@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>MovieSelection.Identity</RootNamespace>
+    <UserSecretsId>44c7bd80-924e-4bb0-a8c7-0bba687057c0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -215,6 +215,8 @@ namespace IdentityServerHost.Quickstart.UI
                 filtered.Add(new Claim(JwtClaimTypes.Email, email));
             }
 
+            filtered.Add(new Claim(JwtClaimTypes.Role, "user"));
+
             var user = new ApplicationUser
             {
                 UserName = Guid.NewGuid().ToString(),

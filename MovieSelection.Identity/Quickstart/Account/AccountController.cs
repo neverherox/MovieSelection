@@ -8,16 +8,17 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using MovieSelection.Identity.Models;
+using MovieSelection.Identity.Quickstart.Account;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -77,7 +78,7 @@ namespace IdentityServerHost.Quickstart.UI
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             // the user clicked the "cancel" button
-            if (button != "login")
+            if (button == "cancel")
             {
                 if (context != null)
                 {
@@ -101,6 +102,11 @@ namespace IdentityServerHost.Quickstart.UI
                     // since we don't have a valid context, then we just go back to the home page
                     return Redirect("~/");
                 }
+            }
+
+            if (button == "register")
+            {
+                return RedirectToAction("Register", new {model.ReturnUrl});
             }
 
             if (ModelState.IsValid)
@@ -339,6 +345,45 @@ namespace IdentityServerHost.Quickstart.UI
             }
 
             return vm;
+        }
+
+        [HttpGet]
+        public IActionResult Register(string returnUrl)
+        {
+            var registerViewModel = new RegisterViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            return View("Register", registerViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string button)
+        {
+            if (button == "register")
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = new ApplicationUser
+                        { UserName = registerViewModel.Email, Email = registerViewModel.Email };
+                    var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+                    if (result.Succeeded)
+                    {
+                        var claims = new List<Claim>();
+                        claims.Add(new Claim(JwtClaimTypes.Email, registerViewModel.Email));
+                        claims.Add(new Claim(JwtClaimTypes.Role, "user"));
+                        await _userManager.AddClaimsAsync(user, claims);
+                        return RedirectToAction("Login", new { registerViewModel.ReturnUrl });
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                return View(registerViewModel);
+            }
+            return RedirectToAction("Login", new { registerViewModel.ReturnUrl });
         }
     }
 }

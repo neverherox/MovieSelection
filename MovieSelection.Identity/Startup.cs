@@ -31,6 +31,14 @@ namespace MovieSelection.Identity
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<ApplicationDbContext>(options =>

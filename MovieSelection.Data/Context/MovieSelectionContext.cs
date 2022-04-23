@@ -18,7 +18,7 @@ public class MovieSelectionContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("");
+        optionsBuilder.UseSqlServer("Data Source=EPBYGROW00E8;Initial Catalog=MovieSelection;Integrated Security=True");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

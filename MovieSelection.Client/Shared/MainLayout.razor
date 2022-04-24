@@ -1,18 +1,25 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<Layout>
+    <LayoutHeader Style = "background-color: red">
+        <Bar Breakpoint="Breakpoint.Desktop">
+            <BarBrand>
+                MovieSelection
+            </BarBrand>
+            <BarToggler />
+            <BarMenu>
+                <BarEnd>
+                    <BarItem>
+                        <LoginDisplay/>
+                    </BarItem>
+                </BarEnd>
+            </BarMenu>
+        </Bar>
+    </LayoutHeader>
+    <LayoutContent Style="background-color: blue">
+        @Body
+    </LayoutContent>
+    <LayoutFooter Style = "background-color: red">
+        123
+    </LayoutFooter>
+</Layout>

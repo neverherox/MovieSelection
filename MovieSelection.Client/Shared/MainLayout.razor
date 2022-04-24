@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <Layout>
-    <LayoutHeader Style = "background-color: #F5FFFA">
+    <LayoutHeader>
         <Bar Breakpoint="Breakpoint.Desktop">
             <BarBrand>
                 MovieSelection
@@ -16,9 +16,11 @@
             </BarMenu>
         </Bar>
     </LayoutHeader>
-    <LayoutContent Style="background-color: #F5FFFA">
+    <LayoutContent>
         @Body
     </LayoutContent>
-    <LayoutFooter Style="background-color: #F5FFFA">
+    <LayoutFooter Class = "text-center">
+        <a href="https://vk.com/kromashkevich"><img class="img-thumbnail" width="35" src="logos/vk.png"/></a>
+        <a href="https://www.instagram.com/neverherox"><img class="img-thumbnail" width="35" src="logos/inst.png"/></a>
     </LayoutFooter>
 </Layout>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MovieSelection.Data.Models;
+using MovieSelection.Models;
 
 namespace MovieSelection.Data.Configuration
 {

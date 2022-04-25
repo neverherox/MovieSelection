@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MovieSelection.Data\MovieSelection.Data.csproj" />
+    <ProjectReference Include="..\MovieSelection.Models\MovieSelection.Models.csproj" />
   </ItemGroup>
 
 </Project>

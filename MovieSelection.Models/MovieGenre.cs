@@ -1,4 +1,4 @@
-﻿namespace MovieSelection.Data.Models;
+﻿namespace MovieSelection.Models;
 
 public class MovieGenre
 {

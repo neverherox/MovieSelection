@@ -1,4 +1,4 @@
-﻿namespace MovieSelection.Data.Models;
+﻿namespace MovieSelection.Models;
 
 public class Movie
 {
@@ -11,4 +11,6 @@ public class Movie
     public short Year { get; set; }
 
     public int CountryId { get; set; }
+
+    public byte[] Image { get; set; }
 }

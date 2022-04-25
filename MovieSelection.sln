@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieSelection.Api", "Movie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieSelection.Data", "MovieSelection.Data\MovieSelection.Data.csproj", "{387CFC32-2491-4FB6-96CF-FF65C235E05C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieSelection.Models", "MovieSelection.Models\MovieSelection.Models.csproj", "{BAA835DD-F5C9-42FA-893A-2D009E9A4672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{387CFC32-2491-4FB6-96CF-FF65C235E05C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{387CFC32-2491-4FB6-96CF-FF65C235E05C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{387CFC32-2491-4FB6-96CF-FF65C235E05C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAA835DD-F5C9-42FA-893A-2D009E9A4672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA835DD-F5C9-42FA-893A-2D009E9A4672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA835DD-F5C9-42FA-893A-2D009E9A4672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA835DD-F5C9-42FA-893A-2D009E9A4672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

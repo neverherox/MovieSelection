@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MovieSelection.Client;
+using MovieSelection.Client.Interfaces;
 using MovieSelection.Client.Security;
+using MovieSelection.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -24,7 +26,10 @@ builder.Services.AddHttpClient("api", cl =>
         return handler;
     });
 
-builder.Services.AddScoped(sp => sp.GetService<IHttpClientFactory>().CreateClient("api"));
+builder.Services.AddHttpClient("public", cl =>
+{
+    cl.BaseAddress = new Uri("https://localhost:5021/api/");
+});
 
 builder.Services.AddOidcAuthentication(options =>
 {
@@ -39,5 +44,7 @@ builder.Services
         options.Immediate = true;
     })
     .AddBootstrap5Providers();
+
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 await builder.Build().RunAsync();

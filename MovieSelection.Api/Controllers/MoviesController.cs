@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieSelection.Api.Models;
 using MovieSelection.Data.Context;
 using MovieSelection.Models;
 
@@ -10,10 +12,13 @@ namespace MovieSelection.Api.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
+        private readonly IMapper _mapper;
 
-        public MoviesController(MovieSelectionContext context)
+        public MoviesController(MovieSelectionContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Movies
@@ -71,12 +76,13 @@ namespace MovieSelection.Api.Controllers
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<Movie>> PostMovie([FromForm] PostMovie movie)
         {
-            _context.Movies.Add(movie);
+            var movieEntity = _mapper.Map<Movie>(movie);
+            _context.Movies.Add(movieEntity);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+            return CreatedAtAction("GetMovie", new { id = movieEntity.Id }, movieEntity);
         }
 
         // DELETE: api/Movies/5
@@ -93,6 +99,17 @@ namespace MovieSelection.Api.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // GET: api/Movies/5
+        [HttpGet("{id}/actors")]
+        public async Task<ActionResult<IEnumerable<Actor>>> GetActors(int id)
+        {
+            return await _context
+                .MovieActors
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Actor)
+                .ToListAsync();
         }
 
         private bool MovieExists(int id)

@@ -1,0 +1,12 @@
+﻿@page "/movie/{Id:int}"
+@inject IMovieService _movieService
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Movie _movie;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _movie = await _movieService.GetMovieAsync(Id);
+    }
+}

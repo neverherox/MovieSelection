@@ -6,7 +6,6 @@ namespace MovieSelection.Client.Services
 {
     public class MovieService : BaseService, IMovieService
     {
-
         public MovieService(IHttpClientFactory factory): base(factory)
         {
         }
@@ -21,6 +20,12 @@ namespace MovieSelection.Client.Services
         {
             var movie = await PublicClient.GetFromJsonAsync<Movie>($"movies/{id}");
             return movie;
+        }
+
+        public async Task<IEnumerable<Actor>> GetActorsAsync(int id)
+        {
+            var actors = await PublicClient.GetFromJsonAsync<IEnumerable<Actor>>($"movies/{id}/actors");
+            return actors;
         }
     }
 }

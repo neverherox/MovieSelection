@@ -4,9 +4,11 @@
 @code {
     [Parameter] public int Id { get; set; }
     private Movie _movie;
+    private IEnumerable<Actor> _actors;
 
     protected override async Task OnInitializedAsync()
     {
         _movie = await _movieService.GetMovieAsync(Id);
+        _actors = await _movieService.GetActorsAsync(Id);
     }
 }

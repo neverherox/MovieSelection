@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieSelection.Api.Models;
 using MovieSelection.Data.Context;
 using MovieSelection.Models;
 
@@ -10,10 +12,13 @@ namespace MovieSelection.Api.Controllers
     public class ActorsController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
+        private readonly IMapper _mapper;
 
-        public ActorsController(MovieSelectionContext context)
+        public ActorsController(MovieSelectionContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Actors
@@ -71,12 +76,13 @@ namespace MovieSelection.Api.Controllers
         // POST: api/Actors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Actor>> PostActor(Actor actor)
+        public async Task<ActionResult<Actor>> PostActor([FromForm] PostActor actor)
         {
-            _context.Actors.Add(actor);
+            var actorEntity = _mapper.Map<Actor>(actor);
+            _context.Actors.Add(actorEntity);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetActor", new { id = actor.Id }, actor);
+            return CreatedAtAction("GetActor", new { id = actorEntity.Id }, actor);
         }
 
         // DELETE: api/Actors/5

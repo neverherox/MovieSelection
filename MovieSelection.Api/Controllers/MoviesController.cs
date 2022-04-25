@@ -108,7 +108,7 @@ namespace MovieSelection.Api.Controllers
             return await _context
                 .MovieActors
                 .Where(x => x.MovieId == id)
-                .Select(x => x.Actor)
+                .Select(x => _context.Actors.First(y => x.ActorId == y.Id))
                 .ToListAsync();
         }
 

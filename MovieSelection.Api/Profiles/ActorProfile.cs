@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MovieSelection.Api.Models;
-using MovieSelection.Models;
+using MovieSelection.Models.RequestModels;
+using MovieSelection.Models.Entities;
 
 namespace MovieSelection.Api.Profiles
 {

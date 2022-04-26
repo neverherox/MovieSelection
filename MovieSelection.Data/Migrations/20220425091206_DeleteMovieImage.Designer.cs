@@ -24,7 +24,7 @@ namespace MovieSelection.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("MovieSelection.Models.Actor", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Actor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,7 +47,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Actors");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.Country", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Country", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.Genre", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Genre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +86,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.Movie", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.MovieActor", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.MovieActor", b =>
                 {
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
@@ -133,7 +133,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("MovieActors");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.MovieGenre", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.MovieGenre", b =>
                 {
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
@@ -146,7 +146,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("MovieGenres");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.Rate", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Rate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -177,7 +177,7 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Rates");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.Review", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -198,9 +198,9 @@ namespace MovieSelection.Data.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("MovieSelection.Models.MovieActor", b =>
+            modelBuilder.Entity("MovieSelection.Models.Entities.MovieActor", b =>
                 {
-                    b.HasOne("MovieSelection.Models.Actor", "Actor")
+                    b.HasOne("MovieSelection.Models.Entities.Actor", "Actor")
                         .WithMany()
                         .HasForeignKey("ActorId")
                         .OnDelete(DeleteBehavior.Cascade)

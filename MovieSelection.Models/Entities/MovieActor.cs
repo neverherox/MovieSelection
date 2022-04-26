@@ -1,4 +1,4 @@
-﻿namespace MovieSelection.Models;
+﻿namespace MovieSelection.Models.Entities;
 
 public class MovieActor
 {

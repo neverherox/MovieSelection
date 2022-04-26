@@ -1,4 +1,6 @@
-﻿namespace MovieSelection.Api.Models
+﻿using Microsoft.AspNetCore.Http;
+
+namespace MovieSelection.Models.RequestModels
 {
     public class PostActor
     {

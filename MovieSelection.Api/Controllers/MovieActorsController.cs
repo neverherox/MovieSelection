@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieSelection.Data.Context;
-using MovieSelection.Models;
+using MovieSelection.Models.Entities;
 
 namespace MovieSelection.Api.Controllers
 {

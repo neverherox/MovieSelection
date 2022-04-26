@@ -31,6 +31,7 @@ public class MovieSelectionContext : DbContext
         modelBuilder.ApplyConfiguration(new MovieGenreConfiguration());
         modelBuilder.ApplyConfiguration(new RateConfiguration());
         modelBuilder.ApplyConfiguration(new ReviewConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 
     public virtual DbSet<Actor> Actors { get; set; }
@@ -48,4 +49,6 @@ public class MovieSelectionContext : DbContext
     public virtual DbSet<Rate> Rates { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
 }

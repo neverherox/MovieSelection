@@ -365,13 +365,14 @@ namespace IdentityServerHost.Quickstart.UI
                 if (ModelState.IsValid)
                 {
                     var user = new ApplicationUser
-                        { UserName = registerViewModel.Email, Email = registerViewModel.Email };
+                        { UserName = registerViewModel.UserName, Email = registerViewModel.Email };
                     var result = await _userManager.CreateAsync(user, registerViewModel.Password);
                     if (result.Succeeded)
                     {
                         var claims = new List<Claim>();
                         claims.Add(new Claim(JwtClaimTypes.Email, registerViewModel.Email));
                         claims.Add(new Claim(JwtClaimTypes.Role, "user"));
+                        claims.Add(new Claim(JwtClaimTypes.Name, registerViewModel.UserName));
                         await _userManager.AddClaimsAsync(user, claims);
                         return RedirectToAction("Login", new { registerViewModel.ReturnUrl });
                     }

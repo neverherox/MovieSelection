@@ -15,8 +15,14 @@
                 <form asp-route="Register">
                     <input type="hidden" asp-for="@Model.ReturnUrl"/>
                     <div class="form-group">
+                        <label asp-for="@Model.UserName"></label>
+                        <input asp-for="@Model.UserName" class="form-control"/>
+                        <span class="text-danger" asp-validation-for="@Model.UserName"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="@Model.Email"></label>
                         <input asp-for="@Model.Email" class="form-control"/>
+                        <span class="text-danger" asp-validation-for="@Model.Email"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="@Model.Password"></label>

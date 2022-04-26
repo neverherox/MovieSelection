@@ -12,6 +12,7 @@ namespace MovieSelection.Data.Configuration
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.Property(x => x.Name).HasMaxLength(50);
+            builder.Property(x => x.Email).HasMaxLength(50);
         }
     }
 }

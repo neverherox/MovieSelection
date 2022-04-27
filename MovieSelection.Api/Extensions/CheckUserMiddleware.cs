@@ -2,7 +2,7 @@
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
 
-namespace MovieSelection.Api
+namespace MovieSelection.Api.Extensions
 {
     public class CheckUserMiddleware
     {

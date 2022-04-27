@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using MovieSelection.Api;
+using MovieSelection.Api.Extensions;
 using MovieSelection.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);

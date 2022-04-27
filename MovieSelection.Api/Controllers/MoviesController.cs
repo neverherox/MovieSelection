@@ -126,6 +126,51 @@ namespace MovieSelection.Api.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("{id}/rate")]
+        public async Task<ActionResult<GetRate>> GetRate(int id)
+        {
+            var value = await _context.Rates
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Value)
+                .DefaultIfEmpty()
+                .AverageAsync();
+
+            var directing = await _context.Rates
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Directing)
+                .DefaultIfEmpty()
+                .AverageAsync(); 
+
+            var entertainment = await _context.Rates
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Entertainment)
+                .DefaultIfEmpty()
+                .AverageAsync(); 
+
+            var plot = await _context.Rates
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Plot)
+                .DefaultIfEmpty()
+                .AverageAsync();
+            
+            var actors = await _context.Rates
+                .Where(x => x.MovieId == id)
+                .Select(x => x.Actors)
+                .DefaultIfEmpty()
+                .AverageAsync();
+
+            var rate = new GetRate
+            {
+                Value = value,
+                Directing = directing,
+                Entertainment = entertainment,
+                Plot = plot,
+                Actors = actors
+            };
+
+            return rate;
+        }
+
         private bool MovieExists(int id)
         {
             return _context.Movies.Any(e => e.Id == id);

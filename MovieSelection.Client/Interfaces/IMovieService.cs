@@ -12,5 +12,7 @@ namespace MovieSelection.Client.Interfaces
         Task<IEnumerable<Actor>> GetActorsAsync(int id);
 
         Task<IEnumerable<GetReview>> GetReviewsAsync(int id);
+
+        Task<GetRate> GetRateAsync(int id);
     }
 }

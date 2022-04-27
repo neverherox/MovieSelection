@@ -5,10 +5,12 @@
     [Parameter] public int Id { get; set; }
     private Movie _movie;
     private IEnumerable<Actor> _actors;
+    private IEnumerable<GetReview> _reviews;
 
     protected override async Task OnInitializedAsync()
     {
         _movie = await _movieService.GetMovieAsync(Id);
         _actors = await _movieService.GetActorsAsync(Id);
+        _reviews = await _movieService.GetReviewsAsync(Id);
     }
 }

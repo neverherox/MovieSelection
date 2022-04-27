@@ -101,7 +101,6 @@ namespace MovieSelection.Api.Controllers
             return NoContent();
         }
 
-        // GET: api/Movies/5
         [HttpGet("{id}/actors")]
         public async Task<ActionResult<IEnumerable<Actor>>> GetActors(int id)
         {
@@ -109,6 +108,21 @@ namespace MovieSelection.Api.Controllers
                 .MovieActors
                 .Where(x => x.MovieId == id)
                 .Select(x => _context.Actors.First(y => x.ActorId == y.Id))
+                .ToListAsync();
+        }
+
+        [HttpGet("{id}/reviews")]
+        public async Task<ActionResult<IEnumerable<GetReview>>> GetReviews(int id)
+        {
+            return await _context
+                .Reviews
+                .Where(x => x.MovieId == id)
+                .Select(x => new GetReview
+                {
+                    Id = x.Id,
+                    Text = x.Text,
+                    UserName = _context.Users.First(y => y.Id == x.UserId).Name
+                })
                 .ToListAsync();
         }
 

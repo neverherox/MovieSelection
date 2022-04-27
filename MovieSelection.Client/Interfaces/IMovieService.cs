@@ -1,4 +1,5 @@
 ﻿using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Client.Interfaces
 {
@@ -10,6 +11,6 @@ namespace MovieSelection.Client.Interfaces
 
         Task<IEnumerable<Actor>> GetActorsAsync(int id);
 
-        Task<IEnumerable<Review>> GetReviewsAsync(int id);
+        Task<IEnumerable<GetReview>> GetReviewsAsync(int id);
     }
 }

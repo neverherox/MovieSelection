@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using MovieSelection.Client.Interfaces;
 using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Client.Services
 {
@@ -28,9 +29,9 @@ namespace MovieSelection.Client.Services
             return actors;
         }
 
-        public async Task<IEnumerable<Review>> GetReviewsAsync(int id)
+        public async Task<IEnumerable<GetReview>> GetReviewsAsync(int id)
         {
-            var reviews = await PublicClient.GetFromJsonAsync<IEnumerable<Review>>($"movies/{id}/reviews");
+            var reviews = await PublicClient.GetFromJsonAsync<IEnumerable<GetReview>>($"movies/{id}/reviews");
             return reviews;
         }
     }

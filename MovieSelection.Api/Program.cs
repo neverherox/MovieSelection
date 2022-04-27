@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using MovieSelection.Api;
 using MovieSelection.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<CheckUserMiddleware>();
 
 app.UseEndpoints(endpoints =>
 {

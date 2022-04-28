@@ -1,5 +1,6 @@
 using Blazorise;
 using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -43,7 +44,8 @@ builder.Services
     {
         options.Immediate = true;
     })
-    .AddBootstrap5Providers();
+    .AddBootstrap5Providers()
+    .AddFontAwesomeIcons();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 

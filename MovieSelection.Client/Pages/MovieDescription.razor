@@ -1,8 +1,27 @@
 ﻿@page "/movie/{Id:int}"
 @inject IMovieService _movieService
 
+<CardDeck>
+    <MovieCard Movie="@_movie"></MovieCard>
+</CardDeck>
+
+<MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync"></MovieRate>
+
+<CardDeck>
+    @foreach (var review in _reviews)
+    {
+        <MovieReview Review="@review"/>
+    }
+</CardDeck>
+
+@foreach (var review in _actors)
+{
+    <MovieActor Actor="@review" />
+}
+
 @code {
     [Parameter] public int Id { get; set; }
+
     private Movie _movie;
     private GetRate _rate;
     private IEnumerable<Actor> _actors;
@@ -14,5 +33,10 @@
         _rate = await _movieService.GetRateAsync(Id);
         _actors = await _movieService.GetActorsAsync(Id);
         _reviews = await _movieService.GetReviewsAsync(Id);
+    }
+
+    protected virtual async Task OnRatedAsync()
+    {
+        _rate = await _movieService.GetRateAsync(Id);
     }
 }

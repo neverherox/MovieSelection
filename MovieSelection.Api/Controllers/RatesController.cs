@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
@@ -71,6 +72,7 @@ namespace MovieSelection.Api.Controllers
         // POST: api/Rates
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "user")]
         public async Task<ActionResult<Rate>> PostRate(Rate rate)
         {
             _context.Rates.Add(rate);

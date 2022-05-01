@@ -1,0 +1,14 @@
+﻿<Figure Size="FigureSize.Is256x256">
+    <FigureImage Source="logos/actor.png"/>
+    <FigureCaption>@_fullName</FigureCaption>
+</Figure>
+
+@code {
+    [Parameter] public Actor Actor { get; set; }
+    private string _fullName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _fullName = string.Join(' ', Actor.FirstName, Actor.LastName);
+    }
+}

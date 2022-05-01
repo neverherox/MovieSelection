@@ -4,15 +4,15 @@ public class Rate
 {
     public int Id { get; set; }
 
-    public double? Directing { get; set; }
+    public int? Directing { get; set; }
 
-    public double? Entertainment { get; set; }
+    public int? Entertainment { get; set; }
 
-    public double? Actors { get; set; }
+    public int? Actors { get; set; }
 
-    public double? Plot { get; set; }
+    public int? Plot { get; set; }
 
-    public double Value { get; set; }
+    public int Value { get; set; }
 
     public int MovieId { get; set; }
 

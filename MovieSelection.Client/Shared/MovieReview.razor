@@ -1,0 +1,13 @@
+﻿<Card>
+    <CardBody>
+        <CardHeader>@Review.UserName</CardHeader>
+        <CardText>
+            @Review.Text
+        </CardText>
+        <CardFooter>Date</CardFooter>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public GetReview Review { get; set; }
+}

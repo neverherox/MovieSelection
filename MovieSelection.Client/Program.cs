@@ -48,5 +48,6 @@ builder.Services
     .AddFontAwesomeIcons();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IRateService, RateService>();
 
 await builder.Build().RunAsync();

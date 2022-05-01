@@ -159,13 +159,16 @@ namespace MovieSelection.Api.Controllers
                 .DefaultIfEmpty()
                 .AverageAsync();
 
+            var valuesCount = await _context.Rates.CountAsync();
+
             var rate = new GetRate
             {
                 Value = value,
                 Directing = directing,
                 Entertainment = entertainment,
                 Plot = plot,
-                Actors = actors
+                Actors = actors,
+                ValuesCount = valuesCount
             };
 
             return rate;

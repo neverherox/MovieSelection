@@ -11,5 +11,7 @@
         public double? Plot { get; set; }
 
         public double Value { get; set; }
+
+        public int ValuesCount { get; set; }
     }
 }

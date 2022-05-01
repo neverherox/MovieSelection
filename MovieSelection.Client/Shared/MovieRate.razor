@@ -1,5 +1,5 @@
 ﻿@inject IRateService _rateService
-@inject NavigationManager Navigation
+@inject NavigationManager _navigation
 
 <Div Display="Display.Flex" Style="width:400px; flex-wrap: wrap">
     <Div Display="Display.InlineBlock" Width="Width.Is25">@Math.Round(Rate.Value, 1) <br> @Rate.ValuesCount rates</Div>
@@ -71,7 +71,7 @@
         }
         else
         {
-            Navigation.NavigateTo("authentication/login");
+            _navigation.NavigateTo("authentication/login");
         }
     }
 

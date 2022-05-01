@@ -49,5 +49,6 @@ builder.Services
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IRateService, RateService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 await builder.Build().RunAsync();

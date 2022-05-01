@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Api.Controllers
 {
@@ -10,10 +13,13 @@ namespace MovieSelection.Api.Controllers
     public class ReviewsController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
+        private readonly IMapper _mapper;
 
-        public ReviewsController(MovieSelectionContext context)
+        public ReviewsController(MovieSelectionContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Reviews
@@ -71,12 +77,14 @@ namespace MovieSelection.Api.Controllers
         // POST: api/Reviews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Review>> PostReview(Review review)
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<Review>> PostReview(PostReview review)
         {
-            _context.Reviews.Add(review);
+            var reviewEntity = _mapper.Map<Review>(review);
+            _context.Reviews.Add(reviewEntity);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReview", new { id = review.Id }, review);
+            return CreatedAtAction("GetReview", new { id = reviewEntity.Id }, review);
         }
 
         // DELETE: api/Reviews/5

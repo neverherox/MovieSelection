@@ -1,0 +1,82 @@
+﻿@inject IReviewService _reviewService
+@inject NavigationManager _navigation
+
+<CardDeck>
+    @foreach (var review in Reviews)
+    {
+        <MovieReview Review="@review" />
+    }
+</CardDeck>
+<Div Display="Display.Block" Width="Width.Is100">
+    <Button Block Clicked="@ShowModal">Review</Button>
+</Div>
+
+<Modal @ref="_modal">
+    <ModalContent Size="ModalSize.Default" Centered>
+        <ModalHeader>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            <Validations Mode="ValidationMode.Auto" @ref="_validations" Model="@_review">
+                <Validation>
+                    <TextEdit @bind-Text="@_review.Text" Placeholder="Your review">
+                        <Feedback>
+                            <ValidationError/>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            </Validations>
+        </ModalBody>
+        <ModalFooter>
+            <Button Clicked="@HideModalAsync">Review</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Parameter] public IEnumerable<GetReview> Reviews { get; set; }
+    [Parameter] public int MovieId { get; set; }
+    [Parameter] public EventCallback OnReview { get; set; }
+
+    private Modal _modal;
+    private ClaimsPrincipal _user;
+    private PostReview _review;
+    private Validations _validations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        _user = authState.User;
+        _review = new PostReview();
+        _review.MovieId = MovieId;
+    }
+
+    private void ShowModal()
+    {
+        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        {
+            _validations.ClearAll();
+            _modal.Show();
+        }
+        else
+        {
+            _navigation.NavigateTo("authentication/login");
+        }
+    }
+
+    private async Task HideModalAsync()
+    {
+        if (await _validations.ValidateAll())
+        {
+            var identity = (ClaimsIdentity)_user.Identity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            var userId = Guid.Parse(userIdClaim.Value);
+            _review.UserId = userId;
+            await _reviewService.PostReviewAsync(_review);
+            await OnReview.InvokeAsync();
+            await _modal.Hide();
+        }
+    }
+}

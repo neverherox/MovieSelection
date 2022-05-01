@@ -121,7 +121,8 @@ namespace MovieSelection.Api.Controllers
                 {
                     Id = x.Id,
                     Text = x.Text,
-                    UserName = _context.Users.First(y => y.Id == x.UserId).Name
+                    UserName = _context.Users.First(y => y.Id == x.UserId).Name,
+                    ReviewDate = x.ReviewDate
                 })
                 .ToListAsync();
         }

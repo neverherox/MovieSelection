@@ -4,10 +4,12 @@
         <CardText>
             @Review.Text
         </CardText>
-        <CardFooter>Date</CardFooter>
+        <CardFooter>@Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)</CardFooter>
     </CardBody>
 </Card>
 
 @code {
     [Parameter] public GetReview Review { get; set; }
+
+    private CultureInfo _ci = new CultureInfo("en-US");
 }

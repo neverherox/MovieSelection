@@ -7,12 +7,7 @@
 
 <MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync"></MovieRate>
 
-<CardDeck>
-    @foreach (var review in _reviews)
-    {
-        <MovieReview Review="@review"/>
-    }
-</CardDeck>
+<MovieReviews Reviews="@_reviews" MovieId="_movie.Id" OnReview="OnReviewedAsync"></MovieReviews>
 
 @foreach (var review in _actors)
 {
@@ -38,5 +33,10 @@
     protected virtual async Task OnRatedAsync()
     {
         _rate = await _movieService.GetRateAsync(Id);
+    }
+
+    protected virtual async Task OnReviewedAsync()
+    {
+        _reviews = await _movieService.GetReviewsAsync(Id);
     }
 }

@@ -1,23 +1,34 @@
 ﻿@page "/movie/{Id:int}"
 @inject IMovieService _movieService
 
-<CardDeck>
-    <MovieCard Movie="@_movie"></MovieCard>
-</CardDeck>
-
+<Div>
+    <Figure Size="FigureSize.Is512x512">
+        <FigureImage Source="logos/movie.png" />
+    </Figure>
+    <Div Display="Display.InlineBlock">
+        <h1>@_movie.Name</h1>
+        @_movie.Description<br>
+        @_movie.Country<br>
+        @_movie.Year<br>
+        @foreach (var genre in _movie.Genres)
+        {
+            @genre<br>
+        }
+    </Div>
+</Div>
 <MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync"></MovieRate>
 
 <MovieReviews Reviews="@_reviews" MovieId="_movie.Id" OnReview="OnReviewedAsync"></MovieReviews>
 
 @foreach (var review in _actors)
 {
-    <MovieActor Actor="@review" />
+    <MovieSelection.Client.Shared.MovieActor Actor="@review" />
 }
 
 @code {
     [Parameter] public int Id { get; set; }
 
-    private Movie _movie;
+    private GetMovie _movie;
     private GetRate _rate;
     private IEnumerable<Actor> _actors;
     private IEnumerable<GetReview> _reviews;

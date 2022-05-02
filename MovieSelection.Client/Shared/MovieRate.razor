@@ -94,7 +94,7 @@
                 };
             await _rateService.PostRateAsync(rate);
             await OnRate.InvokeAsync();
+            await _modal.Hide();
         }
-        await _modal.Hide();
     }
 }

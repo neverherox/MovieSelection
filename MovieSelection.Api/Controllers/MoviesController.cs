@@ -30,7 +30,7 @@ namespace MovieSelection.Api.Controllers
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<GetMovie>> GetMovie(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
 
@@ -39,7 +39,21 @@ namespace MovieSelection.Api.Controllers
                 return NotFound();
             }
 
-            return movie;
+            var getMovie = new GetMovie
+            {
+                Id = movie.Id,
+                Name = movie.Name,
+                Description = movie.Description,
+                Image = movie.Image,
+                Year = movie.Year,
+                Country = _context.Countries.FirstOrDefault(x => x.Id == movie.CountryId)?.Name,
+                Genres = _context.MovieGenres
+                       .Where(x => x.MovieId == movie.Id)
+                       .Select(x => _context.Genres.First(y => y.Id == x.GenreId).Name)
+                       .ToList()
+            };
+
+            return getMovie;
         }
 
         // PUT: api/Movies/5
@@ -140,27 +154,30 @@ namespace MovieSelection.Api.Controllers
                 .Where(x => x.MovieId == id)
                 .Select(x => x.Directing)
                 .DefaultIfEmpty()
-                .AverageAsync(); 
+                .AverageAsync();
 
             var entertainment = await _context.Rates
                 .Where(x => x.MovieId == id)
                 .Select(x => x.Entertainment)
                 .DefaultIfEmpty()
-                .AverageAsync(); 
+                .AverageAsync();
 
             var plot = await _context.Rates
                 .Where(x => x.MovieId == id)
                 .Select(x => x.Plot)
                 .DefaultIfEmpty()
                 .AverageAsync();
-            
+
             var actors = await _context.Rates
                 .Where(x => x.MovieId == id)
                 .Select(x => x.Actors)
                 .DefaultIfEmpty()
                 .AverageAsync();
 
-            var valuesCount = await _context.Rates.CountAsync();
+            var valuesCount = await _context
+                .Rates
+                .Where(x => x.MovieId == id)
+                .CountAsync();
 
             var rate = new GetRate
             {

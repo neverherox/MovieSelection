@@ -17,9 +17,9 @@ namespace MovieSelection.Client.Services
             return movies;
         }
 
-        public async Task<Movie> GetMovieAsync(int id)
+        public async Task<GetMovie> GetMovieAsync(int id)
         {
-            var movie = await PublicClient.GetFromJsonAsync<Movie>($"movies/{id}");
+            var movie = await PublicClient.GetFromJsonAsync<GetMovie>($"movies/{id}");
             return movie;
         }
 

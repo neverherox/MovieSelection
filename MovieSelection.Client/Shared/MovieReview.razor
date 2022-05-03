@@ -1,15 +1,67 @@
-﻿<Card>
+﻿@inject IReviewLikeService _reviewLikeService
+@inject NavigationManager _navigation
+
+<Card>
     <CardBody>
         <CardHeader>@Review.UserName</CardHeader>
         <CardText>
             @Review.Text
         </CardText>
-        <CardFooter>@Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)</CardFooter>
+        <CardFooter>
+            <Div Float="Float.Start" Display="Display.InlineBlock">
+                @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
+            </Div>
+            <Div Float="Float.End" Display="Display.InlineBlock">
+                <Button Class="fas fa-thumbs-up" @onclick="() => LikeAsync(true)"></Button>
+                @Review.LikesCount
+                <Button Class="fas fa-thumbs-down" @onclick="() => LikeAsync(false)"></Button>
+            </Div>
+        </CardFooter>
     </CardBody>
 </Card>
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Parameter] public GetReview Review { get; set; }
 
     private CultureInfo _ci = new CultureInfo("en-US");
+    private ClaimsPrincipal _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        _user = authState.User;
+    }
+
+    private async Task LikeAsync(bool isLike)
+    {
+        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        {
+            var identity = (ClaimsIdentity)_user.Identity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == userId && x.ReviewId == Review.Id);
+            if (reviewLike == null)
+            {
+                reviewLike = new ReviewLike
+                {
+                    UserId = userId,
+                    ReviewId = Review.Id,
+                    Like = isLike
+                };
+                await _reviewLikeService.PostReviewLikeAsync(reviewLike);
+            }
+            else
+            {
+                reviewLike.Like = isLike;
+                await _reviewLikeService.PutReviewLikeAsync(reviewLike, reviewLike.Id);
+            }
+
+        }
+        else
+        {
+            _navigation.NavigateTo("authentication/login");
+        }
+    }
 }

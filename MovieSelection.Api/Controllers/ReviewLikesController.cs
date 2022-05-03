@@ -41,6 +41,7 @@ namespace MovieSelection.Api.Controllers
         // PUT: api/ReviewLikes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> PutReviewLike(int id, ReviewLike reviewLike)
         {
             if (id != reviewLike.Id)
@@ -83,6 +84,7 @@ namespace MovieSelection.Api.Controllers
 
         // DELETE: api/ReviewLikes/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> DeleteReviewLike(int id)
         {
             var reviewLike = await _context.ReviewLikes.FindAsync(id);

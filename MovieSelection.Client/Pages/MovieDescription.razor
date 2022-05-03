@@ -16,9 +16,9 @@
         }
     </Div>
 </Div>
-<MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync"></MovieRate>
+<MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync" User = "@_user" ></MovieRate>
 
-<MovieReviews Reviews="@_reviews" MovieId="_movie.Id" OnReview="OnReviewedAsync"></MovieReviews>
+<MovieReviews Reviews="@_reviews" MovieId="_movie.Id" OnReview="OnReviewedAsync" User="@_user"></MovieReviews>
 
 @foreach (var review in _actors)
 {
@@ -27,11 +27,13 @@
 
 @code {
     [Parameter] public int Id { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private GetMovie _movie;
     private GetRate _rate;
     private IEnumerable<Actor> _actors;
     private IEnumerable<GetReview> _reviews;
+    private ClaimsPrincipal _user;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,6 +41,8 @@
         _rate = await _movieService.GetRateAsync(Id);
         _actors = await _movieService.GetActorsAsync(Id);
         _reviews = await _movieService.GetReviewsAsync(Id);
+        var authState = await authenticationStateTask;
+        _user = authState.User;
     }
 
     protected virtual async Task OnRatedAsync()

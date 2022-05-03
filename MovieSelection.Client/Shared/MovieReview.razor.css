@@ -1,0 +1,19 @@
+﻿.like {
+    color: green;
+    border: none;
+}
+
+.dislike {
+    color: red;
+    border: none;
+}
+
+button {
+    border: none;
+    color: lightgray;
+}
+
+p {
+    display: inline;
+    font-weight: bold;
+}

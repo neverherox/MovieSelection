@@ -25,11 +25,7 @@ namespace MovieSelection.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            return await _context.Movies
-                .Include(x => x.Country)
-                .Include(x => x.MovieGenres)
-                .ThenInclude(x => x.Genre)
-                .ToListAsync();
+            return await _context.Movies.ToListAsync();
         }
 
         // GET: api/Movies/5
@@ -142,7 +138,8 @@ namespace MovieSelection.Api.Controllers
                     Text = x.Text,
                     UserName = x.User.Name,
                     ReviewDate = x.ReviewDate, 
-                    Likes = x.ReviewLikes
+                    Likes = x.ReviewLikes,
+                    LikesCount = x.ReviewLikes.Count(x => x.Like) - x.ReviewLikes.Count(x => !x.Like)
                 })
                 .ToListAsync();
         }

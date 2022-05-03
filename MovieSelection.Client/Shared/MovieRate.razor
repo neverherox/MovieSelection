@@ -44,28 +44,21 @@
 </Modal>
 
 @code {
-    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Parameter] public GetRate Rate { get; set; }
     [Parameter] public int MovieId { get; set; }
     [Parameter] public EventCallback OnRate { get; set; }
+    [Parameter] public ClaimsPrincipal User { get; set; }
 
     private Modal _modal;
-    private ClaimsPrincipal _user;
     private int _value;
     private bool _isDirectingSet;
     private bool _isActorsSet;
     private bool _isEntertainmentSet;
     private bool _isPlotSet;
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await authenticationStateTask;
-        _user = authState.User;
-    }
-
     private void ShowModal()
     {
-        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
         {
             _modal.Show();
         }
@@ -79,7 +72,7 @@
     {
         if (_value != 0)
         {
-            var identity = (ClaimsIdentity)_user.Identity;
+            var identity = User.Identity as ClaimsIdentity;
             var userIdClaim = identity.Claims.First(x => x.Type == "sub");
             var userId = Guid.Parse(userIdClaim.Value);
             var rate = new Rate

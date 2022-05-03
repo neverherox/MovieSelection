@@ -12,56 +12,108 @@
                 @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
             </Div>
             <Div Float="Float.End" Display="Display.InlineBlock">
-                <Button Class="fas fa-thumbs-up" @onclick="() => LikeAsync(true)"></Button>
-                @Review.LikesCount
-                <Button Class="fas fa-thumbs-down" @onclick="() => LikeAsync(false)"></Button>
+                <button class="fas fa-thumbs-up @likeStyle" @onclick="() => LikeAsync(true)"></button>
+                <p class="@likesCountStyle">@Review.LikesCount</p>
+                <button class="fas fa-thumbs-down @dislikeStyle" @onclick="() => LikeAsync(false)"></button>
             </Div>
         </CardFooter>
     </CardBody>
 </Card>
 
 @code {
-    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Parameter] public GetReview Review { get; set; }
+    [Parameter] public ClaimsPrincipal User { get; set; }
+    [Parameter] public EventCallback OnLike { get; set; }
 
     private CultureInfo _ci = new CultureInfo("en-US");
-    private ClaimsPrincipal _user;
+    private Guid? _userId;
+    private string likeStyle;
+    private string dislikeStyle;
+    private string likesCountStyle;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateTask;
-        _user = authState.User;
+        ApplyLikesCountStyle();
+        ApplyLikeStyle();
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            _userId = Guid.Parse(userIdClaim.Value);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        ApplyLikesCountStyle();
+        ApplyLikeStyle();
     }
 
     private async Task LikeAsync(bool isLike)
     {
-        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        if (_userId.HasValue)
         {
-            var identity = (ClaimsIdentity)_user.Identity;
-            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
-            var userId = Guid.Parse(userIdClaim.Value);
-
-            var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == userId && x.ReviewId == Review.Id);
+            var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == _userId && x.ReviewId == Review.Id);
             if (reviewLike == null)
             {
                 reviewLike = new ReviewLike
-                {
-                    UserId = userId,
-                    ReviewId = Review.Id,
-                    Like = isLike
-                };
+                    {
+                        UserId = _userId.Value,
+                        ReviewId = Review.Id,
+                        Like = isLike
+                    };
                 await _reviewLikeService.PostReviewLikeAsync(reviewLike);
             }
             else
             {
-                reviewLike.Like = isLike;
-                await _reviewLikeService.PutReviewLikeAsync(reviewLike, reviewLike.Id);
+                if (reviewLike.Like == isLike)
+                {
+                    await _reviewLikeService.DeleteReviewLikeAsync(reviewLike.Id);
+                }
+                else
+                {
+                    reviewLike.Like = isLike;
+                    await _reviewLikeService.PutReviewLikeAsync(reviewLike, reviewLike.Id);
+                }
             }
-
+            await OnLike.InvokeAsync();
         }
         else
         {
             _navigation.NavigateTo("authentication/login");
+        }
+    }
+
+    public void ApplyLikesCountStyle()
+    {
+        likesCountStyle = Review.LikesCount == 0? 
+            "" :
+            Review.LikesCount < 0 ? "dislike" : "like";
+    }
+
+    public void ApplyLikeStyle()
+    {
+        if (_userId.HasValue)
+        {
+            var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == _userId && x.ReviewId == Review.Id);
+            if (reviewLike == null)
+            {
+                likeStyle = "";
+                dislikeStyle = "";
+            }
+            else
+            {
+                if (reviewLike.Like)
+                {
+                    likeStyle = "like";
+                    dislikeStyle = "";
+                }
+                else
+                {
+                    dislikeStyle = "dislike";
+                    likeStyle = "";
+                }
+            }
         }
     }
 }

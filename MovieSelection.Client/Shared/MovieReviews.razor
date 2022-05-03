@@ -4,7 +4,7 @@
 <CardDeck>
     @foreach (var review in Reviews)
     {
-        <MovieReview Review="@review" />
+        <MovieReview Review="@review" User = "@User" OnLike="OnLikedAsync"/>
     }
 </CardDeck>
 <Div Display="Display.Block" Width="Width.Is100">
@@ -35,27 +35,24 @@
 
 
 @code {
-    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Parameter] public IEnumerable<GetReview> Reviews { get; set; }
     [Parameter] public int MovieId { get; set; }
     [Parameter] public EventCallback OnReview { get; set; }
+    [Parameter] public ClaimsPrincipal User { get; set; }
 
     private Modal _modal;
-    private ClaimsPrincipal _user;
     private PostReview _review;
     private Validations _validations;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationStateTask;
-        _user = authState.User;
         _review = new PostReview();
         _review.MovieId = MovieId;
     }
 
     private void ShowModal()
     {
-        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
         {
             _validations.ClearAll();
             _modal.Show();
@@ -70,7 +67,7 @@
     {
         if (await _validations.ValidateAll())
         {
-            var identity = (ClaimsIdentity)_user.Identity;
+            var identity = User.Identity as ClaimsIdentity;
             var userIdClaim = identity.Claims.First(x => x.Type == "sub");
             var userId = Guid.Parse(userIdClaim.Value);
             _review.UserId = userId;
@@ -78,5 +75,10 @@
             await OnReview.InvokeAsync();
             await _modal.Hide();
         }
+    }
+
+    protected virtual async Task OnLikedAsync()
+    {
+        await OnReview.InvokeAsync();
     }
 }

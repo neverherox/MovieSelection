@@ -18,7 +18,7 @@
         </Div>
     </Div>
     <Div Display="Display.Block" Width="Width.Is100">
-        <Button Block Clicked="@ShowModal">Rate</Button>
+        <Button Block Clicked="@ShowModal">@_rate</Button>
     </Div>
 
 </Div>
@@ -55,10 +55,29 @@
     private bool _isActorsSet;
     private bool _isEntertainmentSet;
     private bool _isPlotSet;
+    private Guid? _userId;
+    private string _rate = "Rate";
+    private bool _isRated;
+
+    protected override void OnInitialized()
+    {
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            _userId = Guid.Parse(userIdClaim.Value);
+            ApplyRateText();
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        ApplyRateText();
+    }
 
     private void ShowModal()
     {
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
+        if (_userId.HasValue)
         {
             _modal.Show();
         }
@@ -72,22 +91,38 @@
     {
         if (_value != 0)
         {
-            var identity = User.Identity as ClaimsIdentity;
-            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
-            var userId = Guid.Parse(userIdClaim.Value);
             var rate = new Rate
-                {
-                    Value = _value,
-                    Directing = _isDirectingSet ? _value : null,
-                    Actors = _isActorsSet ? _value : null,
-                    Entertainment = _isEntertainmentSet ? _value : null,
-                    Plot = _isPlotSet ? _value : null,
-                    MovieId = MovieId,
-                    UserId = userId
-                };
-            await _rateService.PostRateAsync(rate);
+            {
+                Value = _value,
+                Directing = _isDirectingSet ? _value : null,
+                Actors = _isActorsSet ? _value : null,
+                Entertainment = _isEntertainmentSet ? _value : null,
+                Plot = _isPlotSet ? _value : null,
+                MovieId = MovieId,
+                UserId = _userId.Value
+            };
+            if (_isRated)
+            {
+                var rateId = Rate.Rates.First(x => x.MovieId == MovieId && x.UserId == _userId).Id;
+                rate.Id = rateId;
+                await _rateService.PutRateAsync(rate);
+            }
+            else
+            {
+                await _rateService.PostRateAsync(rate);
+            }
             await OnRate.InvokeAsync();
             await _modal.Hide();
+        }
+    }
+
+    public void ApplyRateText()
+    {
+
+        _isRated = Rate.Rates.FirstOrDefault(x => x.MovieId == MovieId && x.UserId == _userId) != null;
+        if (_isRated)
+        {
+            _rate = "Rerate";
         }
     }
 }

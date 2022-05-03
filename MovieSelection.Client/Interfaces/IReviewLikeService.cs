@@ -6,7 +6,7 @@ namespace MovieSelection.Client.Interfaces
     {
         Task PostReviewLikeAsync(ReviewLike reviewLike);
 
-        Task PutReviewLikeAsync(ReviewLike reviewLike, int id);
+        Task PutReviewLikeAsync(ReviewLike reviewLike);
 
         Task DeleteReviewLikeAsync(int id);
     }

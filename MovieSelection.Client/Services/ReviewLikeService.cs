@@ -15,9 +15,9 @@ namespace MovieSelection.Client.Services
             await PrivateClient.PostAsJsonAsync("review-likes", reviewLike);
         }
 
-        public async Task PutReviewLikeAsync(ReviewLike reviewLike, int id)
+        public async Task PutReviewLikeAsync(ReviewLike reviewLike)
         {
-            await PrivateClient.PutAsJsonAsync($"review-likes/{id}", reviewLike);
+            await PrivateClient.PutAsJsonAsync($"review-likes/{reviewLike.Id}", reviewLike);
         }
 
         public async Task DeleteReviewLikeAsync(int id)

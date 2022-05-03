@@ -1,4 +1,6 @@
-﻿namespace MovieSelection.Models.RequestModels
+﻿using MovieSelection.Models.Entities;
+
+namespace MovieSelection.Models.RequestModels
 {
     public class GetRate
     {
@@ -13,5 +15,7 @@
         public double Value { get; set; }
 
         public int ValuesCount { get; set; }
+
+        public IEnumerable<Rate> Rates { get; set; }
     }
 }

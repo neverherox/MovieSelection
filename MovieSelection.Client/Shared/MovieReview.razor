@@ -12,9 +12,9 @@
                 @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
             </Div>
             <Div Float="Float.End" Display="Display.InlineBlock">
-                <button class="fas fa-thumbs-up @likeStyle" @onclick="() => LikeAsync(true)"></button>
-                <p class="@likesCountStyle">@Review.LikesCount</p>
-                <button class="fas fa-thumbs-down @dislikeStyle" @onclick="() => LikeAsync(false)"></button>
+                <button class="fas fa-thumbs-up @_likeStyle" @onclick="() => LikeAsync(true)"></button>
+                <p class="@_likesCountStyle">@Review.LikesCount</p>
+                <button class="fas fa-thumbs-down @_dislikeStyle" @onclick="() => LikeAsync(false)"></button>
             </Div>
         </CardFooter>
     </CardBody>
@@ -27,11 +27,11 @@
 
     private CultureInfo _ci = new CultureInfo("en-US");
     private Guid? _userId;
-    private string likeStyle;
-    private string dislikeStyle;
-    private string likesCountStyle;
+    private string _likeStyle;
+    private string _dislikeStyle;
+    private string _likesCountStyle;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         ApplyLikesCountStyle();
         ApplyLikeStyle();
@@ -73,7 +73,7 @@
                 else
                 {
                     reviewLike.Like = isLike;
-                    await _reviewLikeService.PutReviewLikeAsync(reviewLike, reviewLike.Id);
+                    await _reviewLikeService.PutReviewLikeAsync(reviewLike);
                 }
             }
             await OnLike.InvokeAsync();
@@ -86,7 +86,7 @@
 
     public void ApplyLikesCountStyle()
     {
-        likesCountStyle = Review.LikesCount == 0? 
+        _likesCountStyle = Review.LikesCount == 0? 
             "" :
             Review.LikesCount < 0 ? "dislike" : "like";
     }
@@ -98,20 +98,20 @@
             var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == _userId && x.ReviewId == Review.Id);
             if (reviewLike == null)
             {
-                likeStyle = "";
-                dislikeStyle = "";
+                _likeStyle = "";
+                _dislikeStyle = "";
             }
             else
             {
                 if (reviewLike.Like)
                 {
-                    likeStyle = "like";
-                    dislikeStyle = "";
+                    _likeStyle = "like";
+                    _dislikeStyle = "";
                 }
                 else
                 {
-                    dislikeStyle = "dislike";
-                    likeStyle = "";
+                    _dislikeStyle = "dislike";
+                    _likeStyle = "";
                 }
             }
         }

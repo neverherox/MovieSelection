@@ -139,7 +139,7 @@ namespace MovieSelection.Api.Controllers
                     UserName = x.User.Name,
                     ReviewDate = x.ReviewDate, 
                     Likes = x.ReviewLikes,
-                    LikesCount = x.ReviewLikes.Count(x => x.Like) - x.ReviewLikes.Count(x => !x.Like)
+                    LikesCount = x.ReviewLikes.Count(y => y.Like) - x.ReviewLikes.Count(y => !y.Like)
                 })
                 .ToListAsync();
         }
@@ -189,7 +189,8 @@ namespace MovieSelection.Api.Controllers
                 Entertainment = entertainment,
                 Plot = plot,
                 Actors = actors,
-                ValuesCount = valuesCount
+                ValuesCount = valuesCount,
+                Rates = await _context.Rates.Where(x => x.MovieId == id).ToListAsync()
             };
 
             return rate;

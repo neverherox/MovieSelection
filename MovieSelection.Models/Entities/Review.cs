@@ -11,4 +11,8 @@ public class Review
     public int MovieId { get; set; }
 
     public Guid UserId { get; set; }
+
+    public User User { get; set; }
+
+    public ICollection<ReviewLike> ReviewLikes { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieSelection.Data.Context;
 
@@ -11,9 +12,10 @@ using MovieSelection.Data.Context;
 namespace MovieSelection.Data.Migrations
 {
     [DbContext(typeof(MovieSelectionContext))]
-    partial class MovieSelectionContextModelSnapshot : ModelSnapshot
+    [Migration("20220503132737_AddCountryForeignKeyInMovie")]
+    partial class AddCountryForeignKeyInMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,8 +134,6 @@ namespace MovieSelection.Data.Migrations
 
                     b.HasKey("MovieId", "ActorId");
 
-                    b.HasIndex("ActorId");
-
                     b.ToTable("MovieActors");
                 });
 
@@ -146,8 +146,6 @@ namespace MovieSelection.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("MovieId", "GenreId");
-
-                    b.HasIndex("GenreId");
 
                     b.ToTable("MovieGenres");
                 });
@@ -210,8 +208,6 @@ namespace MovieSelection.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Reviews");
                 });
 
@@ -233,8 +229,6 @@ namespace MovieSelection.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReviewId");
 
                     b.ToTable("ReviewLikes");
                 });
@@ -264,74 +258,6 @@ namespace MovieSelection.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.MovieActor", b =>
-                {
-                    b.HasOne("MovieSelection.Models.Entities.Actor", "Actor")
-                        .WithMany()
-                        .HasForeignKey("ActorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieSelection.Models.Entities.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Actor");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.MovieGenre", b =>
-                {
-                    b.HasOne("MovieSelection.Models.Entities.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieSelection.Models.Entities.Movie", "Movie")
-                        .WithMany("MovieGenres")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Genre");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.Review", b =>
-                {
-                    b.HasOne("MovieSelection.Models.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.ReviewLike", b =>
-                {
-                    b.HasOne("MovieSelection.Models.Entities.Review", null)
-                        .WithMany("ReviewLikes")
-                        .HasForeignKey("ReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.Movie", b =>
-                {
-                    b.Navigation("MovieGenres");
-                });
-
-            modelBuilder.Entity("MovieSelection.Models.Entities.Review", b =>
-                {
-                    b.Navigation("ReviewLikes");
                 });
 #pragma warning restore 612, 618
         }

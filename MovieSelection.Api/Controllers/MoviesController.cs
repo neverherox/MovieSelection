@@ -25,14 +25,22 @@ namespace MovieSelection.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            return await _context.Movies.ToListAsync();
+            return await _context.Movies
+                .Include(x => x.Country)
+                .Include(x => x.MovieGenres)
+                .ThenInclude(x => x.Genre)
+                .ToListAsync();
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GetMovie>> GetMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _context.Movies
+                .Include(x => x.Country)
+                .Include(x => x.MovieGenres)
+                .ThenInclude(x => x.Genre)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (movie == null)
             {
@@ -46,11 +54,8 @@ namespace MovieSelection.Api.Controllers
                 Description = movie.Description,
                 Image = movie.Image,
                 Year = movie.Year,
-                Country = _context.Countries.FirstOrDefault(x => x.Id == movie.CountryId)?.Name,
-                Genres = _context.MovieGenres
-                       .Where(x => x.MovieId == movie.Id)
-                       .Select(x => _context.Genres.First(y => y.Id == x.GenreId).Name)
-                       .ToList()
+                Country = movie.Country.Name,
+                Genres = movie.MovieGenres.Select(x => x.Genre.Name)
             };
 
             return getMovie;
@@ -121,7 +126,7 @@ namespace MovieSelection.Api.Controllers
             return await _context
                 .MovieActors
                 .Where(x => x.MovieId == id)
-                .Select(x => _context.Actors.First(y => x.ActorId == y.Id))
+                .Select(x => x.Actor)
                 .ToListAsync();
         }
 
@@ -135,8 +140,9 @@ namespace MovieSelection.Api.Controllers
                 {
                     Id = x.Id,
                     Text = x.Text,
-                    UserName = _context.Users.First(y => y.Id == x.UserId).Name,
-                    ReviewDate = x.ReviewDate
+                    UserName = x.User.Name,
+                    ReviewDate = x.ReviewDate, 
+                    Likes = x.ReviewLikes
                 })
                 .ToListAsync();
         }

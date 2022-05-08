@@ -7,52 +7,52 @@ using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Api.Controllers
 {
-    [Route("api/movie-actors")]
+    [Route("api/movie-genres")]
     [ApiController]
-    public class MovieActorsController : ControllerBase
+    public class MovieGenresController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
         private readonly IMapper _mapper;
 
-        public MovieActorsController(MovieSelectionContext context,
+        public MovieGenresController(MovieSelectionContext context,
             IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        // GET: api/MovieActors
+        // GET: api/MovieGenres
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieActor>>> GetMovieActors()
+        public async Task<ActionResult<IEnumerable<MovieGenre>>> GetMovieGenres()
         {
-            return await _context.MovieActors.ToListAsync();
+            return await _context.MovieGenres.ToListAsync();
         }
 
-        // GET: api/MovieActors/5
+        // GET: api/MovieGenres/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MovieActor>> GetMovieActor(int id)
+        public async Task<ActionResult<MovieGenre>> GetMovieGenre(int id)
         {
-            var movieActor = await _context.MovieActors.FindAsync(id);
+            var movieGenre = await _context.MovieGenres.FindAsync(id);
 
-            if (movieActor == null)
+            if (movieGenre == null)
             {
                 return NotFound();
             }
 
-            return movieActor;
+            return movieGenre;
         }
 
-        // PUT: api/MovieActors/5
+        // PUT: api/MovieGenres/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovieActor(int id, MovieActor movieActor)
+        public async Task<IActionResult> PutMovieGenre(int id, MovieGenre movieGenre)
         {
-            if (id != movieActor.MovieId)
+            if (id != movieGenre.MovieId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(movieActor).State = EntityState.Modified;
+            _context.Entry(movieGenre).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace MovieSelection.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieActorExists(id))
+                if (!MovieGenreExists(id))
                 {
                     return NotFound();
                 }
@@ -73,20 +73,20 @@ namespace MovieSelection.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/MovieActors
+        // POST: api/MovieGenres
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MovieActor>> PostMovieActor(PostMovieActor movieActor)
+        public async Task<ActionResult<MovieGenre>> PostMovieGenre(PostMovieGenre movieGenre)
         {
-            var movieActorEntity = _mapper.Map<MovieActor>(movieActor);
-            _context.MovieActors.Add(movieActorEntity);
+            var movieGenreEntity = _mapper.Map<MovieGenre>(movieGenre);
+            _context.MovieGenres.Add(movieGenreEntity);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (MovieActorExists(movieActor.MovieId))
+                if (MovieGenreExists(movieGenre.MovieId))
                 {
                     return Conflict();
                 }
@@ -96,28 +96,28 @@ namespace MovieSelection.Api.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMovieActor", new { id = movieActorEntity.MovieId }, movieActorEntity);
+            return CreatedAtAction("GetMovieGenre", new { id = movieGenreEntity.MovieId }, movieGenreEntity);
         }
 
-        // DELETE: api/MovieActors/5
+        // DELETE: api/MovieGenres/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovieActor(int id)
+        public async Task<IActionResult> DeleteMovieGenre(int id)
         {
-            var movieActor = await _context.MovieActors.FindAsync(id);
-            if (movieActor == null)
+            var movieGenre = await _context.MovieGenres.FindAsync(id);
+            if (movieGenre == null)
             {
                 return NotFound();
             }
 
-            _context.MovieActors.Remove(movieActor);
+            _context.MovieGenres.Remove(movieGenre);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MovieActorExists(int id)
+        private bool MovieGenreExists(int id)
         {
-            return _context.MovieActors.Any(e => e.MovieId == id);
+            return _context.MovieGenres.Any(e => e.MovieId == id);
         }
     }
 }

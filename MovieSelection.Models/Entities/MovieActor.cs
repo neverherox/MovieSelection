@@ -1,4 +1,6 @@
-﻿namespace MovieSelection.Models.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace MovieSelection.Models.Entities;
 
 public class MovieActor
 {

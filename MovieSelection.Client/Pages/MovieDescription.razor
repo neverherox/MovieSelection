@@ -8,21 +8,21 @@
     <Div Display="Display.InlineBlock">
         <h1>@_movie.Name</h1>
         @_movie.Description<br>
-        @_movie.Country<br>
+        @_movie.Country.Name<br>
         @_movie.Year<br>
         @foreach (var genre in _movie.Genres)
         {
-            @genre<br>
+            @genre.Name<br>
         }
     </Div>
 </Div>
-<MovieRate Rate="@_rate" MovieId="_movie.Id" OnRate="OnRatedAsync" User = "@_user" ></MovieRate>
+<MovieRate Rate="@_rate" MovieId="@Id" OnRate="OnRatedAsync" User = "@_user" ></MovieRate>
 
-<MovieReviews Reviews="@_reviews" MovieId="_movie.Id" OnReview="OnReviewedAsync" User="@_user"></MovieReviews>
+<MovieReviews Reviews="@_reviews" MovieId="@Id" OnReview="OnReviewedAsync" User="@_user"></MovieReviews>
 
-@foreach (var review in _actors)
+@foreach (var actor in _actors)
 {
-    <MovieSelection.Client.Shared.MovieActor Actor="@review" />
+    <MovieSelection.Client.Shared.MovieActor Actor="@actor" />
 }
 
 @code {
@@ -37,6 +37,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Initialise();
         _movie = await _movieService.GetMovieAsync(Id);
         _rate = await _movieService.GetRateAsync(Id);
         _actors = await _movieService.GetActorsAsync(Id);
@@ -53,5 +54,14 @@
     protected virtual async Task OnReviewedAsync()
     {
         _reviews = await _movieService.GetReviewsAsync(Id);
+    }
+
+    private void Initialise()
+    {
+        _movie = new GetMovie{Genres = new List<Genre>(), Country = new Country()};
+        _rate = new GetRate{Rates = new List<Rate>()};
+        _actors = new List<Actor>();
+        _reviews = new List<GetReview>();
+        _user = new ClaimsPrincipal();
     }
 }

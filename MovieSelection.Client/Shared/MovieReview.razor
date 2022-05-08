@@ -84,14 +84,14 @@
         }
     }
 
-    public void ApplyLikesCountStyle()
+    private void ApplyLikesCountStyle()
     {
         _likesCountStyle = Review.LikesCount == 0? 
             "" :
             Review.LikesCount < 0 ? "dislike" : "like";
     }
 
-    public void ApplyLikeStyle()
+    private void ApplyLikeStyle()
     {
         if (_userId.HasValue)
         {

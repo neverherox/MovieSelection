@@ -1,20 +1,176 @@
 ﻿@page "/movies"
+@page "/movies/{Name}"
+
 @inject IMovieService _movieService
+@inject IGenreService _genreService
+@inject ICountryService _countryService
+@inject IMovieFilterService _movieFilterService
 
 <PageTitle>Movies</PageTitle>
 
+<Div Width="Width.Is50" Margin="Margin.IsAuto">
+    <SelectList Style="display:inline-block"
+                TItem="GetGenre"
+                TValue="int"
+                Data="@_genres"
+                TextField="@((item)=>item.Name)"
+                ValueField="@((item)=>item.Id)"
+                SelectedValue="@_movieFilterService.GenreId"
+                SelectedValueChanged="@OnGenreSelected"
+                DefaultItemText="Genre" />
+    <SelectList Style="display:inline-block"
+                TItem="Genre"
+                TValue="int"
+                Data="@_subgenres"
+                TextField="@((item)=>item.Name)"
+                ValueField="@((item)=>item.Id)"
+                SelectedValue="@_movieFilterService.SubgenreId"
+                SelectedValueChanged="@OnSubgenreSelected" Disabled="@_isSubgenresDisabled"
+                DefaultItemText="Subgenre" />
+    <SelectList Style="display:inline-block"
+                TItem="Country"
+                TValue="int"
+                Data="@_countries"
+                TextField="@((item)=>item.Name)"
+                ValueField="@((item)=>item.Id)"
+                SelectedValue="@_movieFilterService.CountryId"
+                SelectedValueChanged="@OnCountrySelected"
+                DefaultItemText="Country" />
+    <Div>
+        Years<br>
+        <Div Display="Display.InlineBlock">
+            From:<input type="number" class="form-control" min="2001" max="@_movieFilterService.MaxYear" step="7" @onchange="OnMinYearSelected" value="@_movieFilterService.MinYear">
+        </Div>
+        <Div Display="Display.InlineBlock">
+            To:<input type="number" class="form-control" min="@_movieFilterService.MinYear" max="2022" @onchange="OnMaxYearSelected" step="7" value="@_movieFilterService.MaxYear">
+        </Div>
+    </Div>
+    <Div>
+        Rate<br>
+        <Div Display="Display.InlineBlock">
+            From:<input type="number" class="form-control" min="0" max="@_movieFilterService.MaxYear" @onchange="OnMinRateSelected" step="2" value="@_movieFilterService.MinRate">
+        </Div>
+        <Div Display="Display.InlineBlock">
+            To:<input type="number" class="form-control" min="@_movieFilterService.MinRate" max="10" @onchange="OnMaxRateSelected" step="2" value="@_movieFilterService.MaxRate">
+        </Div>
+    </Div>
+    <Div>
+        <Button Clicked="OnFilterDeleted">
+            <Icon Name="IconName.Delete"></Icon> Delete filter
+        </Button>
+    </Div>
+</Div>
+
 <CardDeck>
-@foreach (var movie in _movies)
-{
-    <MovieCard Movie="@movie"></MovieCard>
-}
+    @foreach (var movie in _filteredMovies)
+    {
+        <MovieCard Movie="@movie"></MovieCard>
+    }
 </CardDeck>
 
 @code {
-    private IEnumerable<Movie> _movies = new List<Movie>();
+    [Parameter]
+    public string Name { get; set; }
+
+    private IEnumerable<GetMovie> _movies;
+    private IEnumerable<GetMovie> _filteredMovies;
+    private IEnumerable<GetGenre> _genres;
+    private IEnumerable<Genre> _subgenres;
+    private IEnumerable<Country> _countries;
+    private bool _isSubgenresDisabled = true;
 
     protected override async Task OnInitializedAsync()
     {
+        Initialise();
         _movies = await _movieService.GetMoviesAsync();
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+        _genres = await _genreService.GetGenresAsync();
+        _countries = await _countryService.GetCountriesAsync();
+        var selectedGenre = _genres.FirstOrDefault(x => x.Id == _movieFilterService.GenreId);
+        if (selectedGenre != null)
+        {
+            _subgenres = selectedGenre.Subgenres;
+            _isSubgenresDisabled = !_subgenres.Any();
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        _movieFilterService.Name = Name;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void OnGenreSelected(int selectedGenreId)
+    {
+        if (selectedGenreId == 0)
+        {
+            _isSubgenresDisabled = true;
+        }
+        else
+        {
+            _subgenres = _genres.First(x => x.Id == selectedGenreId).Subgenres;
+            _isSubgenresDisabled = !_subgenres.Any();
+        }
+        _movieFilterService.GenreId = selectedGenreId;
+        _movieFilterService.SubgenreId = 0;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+        StateHasChanged();
+    }
+
+    private void OnSubgenreSelected(int selectedSubgenreId)
+    {
+        _movieFilterService.SubgenreId = selectedSubgenreId;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+        StateHasChanged();
+    }
+
+    private void OnCountrySelected(int selectedCountryId)
+    {
+        _movieFilterService.CountryId = selectedCountryId;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+        StateHasChanged();
+    }
+
+    private void OnMinRateSelected(ChangeEventArgs args)
+    {
+        var selectedMinRate = Convert.ToInt32(args.Value);
+        _movieFilterService.MinRate = selectedMinRate;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void OnMaxRateSelected(ChangeEventArgs args)
+    {
+        var selectedMaxRate = Convert.ToInt32(args.Value);
+        _movieFilterService.MaxRate = selectedMaxRate;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void OnMinYearSelected(ChangeEventArgs args)
+    {
+        var selectedMinYear = Convert.ToInt32(args.Value);
+        _movieFilterService.MinYear = selectedMinYear;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void OnMaxYearSelected(ChangeEventArgs args)
+    {
+        var selectedMaxYear = Convert.ToInt32(args.Value);
+        _movieFilterService.MaxYear = selectedMaxYear;
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void OnFilterDeleted()
+    {
+        _movieFilterService.ResetFilters();
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
+    private void Initialise()
+    {
+        _movies = new List<GetMovie>();
+        _filteredMovies = new List<GetMovie>();
+        _genres = new List<GetGenre>();
+        _subgenres = new List<Genre>();
+        _countries = new List<Country>();
     }
 }

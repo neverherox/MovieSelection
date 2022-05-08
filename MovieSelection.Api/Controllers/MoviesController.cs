@@ -23,9 +23,20 @@ namespace MovieSelection.Api.Controllers
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<GetMovie>>> GetMovies()
         {
-            return await _context.Movies.ToListAsync();
+            return await _context.Movies
+                .Select(x => new GetMovie
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Image = x.Image,
+                    Year = x.Year,
+                    Country = x.Country,
+                    Genres = x.MovieGenres.Where(y => y.MovieId == x.Id).Select(y => y.Genre).ToList(),
+                    Rate =  _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                }).ToListAsync();
         }
 
         // GET: api/Movies/5
@@ -50,8 +61,8 @@ namespace MovieSelection.Api.Controllers
                 Description = movie.Description,
                 Image = movie.Image,
                 Year = movie.Year,
-                Country = movie.Country.Name,
-                Genres = movie.MovieGenres.Select(x => x.Genre.Name)
+                Country = movie.Country,
+                Genres = movie.MovieGenres.Where(x => x.MovieId == id).Select(x => x.Genre).ToList()
             };
 
             return getMovie;
@@ -194,6 +205,15 @@ namespace MovieSelection.Api.Controllers
             };
 
             return rate;
+        }
+
+        [HttpGet]
+        [Route("/api/movie-names")]
+        public async Task<ActionResult<IEnumerable<string>>> GetMovieNames()
+        {
+            return await _context.Movies
+                .Select(x => x.Name)
+                .ToListAsync();
         }
 
         private bool MovieExists(int id)

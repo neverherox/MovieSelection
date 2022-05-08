@@ -51,5 +51,8 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IRateService, RateService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReviewLikeService, ReviewLikeService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IMovieFilterService, MovieFilterService>();
 
 await builder.Build().RunAsync();

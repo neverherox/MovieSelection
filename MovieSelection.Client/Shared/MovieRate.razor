@@ -18,7 +18,7 @@
         </Div>
     </Div>
     <Div Display="Display.Block" Width="Width.Is100">
-        <Button Block Clicked="@ShowModal">@_rate</Button>
+        <Button Block Clicked="@ShowModal">Rate</Button>
     </Div>
 
 </Div>
@@ -44,6 +44,7 @@
 </Modal>
 
 @code {
+
     [Parameter] public GetRate Rate { get; set; }
     [Parameter] public int MovieId { get; set; }
     [Parameter] public EventCallback OnRate { get; set; }
@@ -55,29 +56,10 @@
     private bool _isActorsSet;
     private bool _isEntertainmentSet;
     private bool _isPlotSet;
-    private Guid? _userId;
-    private string _rate = "Rate";
-    private bool _isRated;
-
-    protected override void OnInitialized()
-    {
-        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
-        {
-            var identity = User.Identity as ClaimsIdentity;
-            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
-            _userId = Guid.Parse(userIdClaim.Value);
-            ApplyRateText();
-        }
-    }
-
-    protected override void OnParametersSet()
-    {
-        ApplyRateText();
-    }
 
     private void ShowModal()
     {
-        if (_userId.HasValue)
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
         {
             _modal.Show();
         }
@@ -91,6 +73,9 @@
     {
         if (_value != 0)
         {
+            var identity = User.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            var userId = Guid.Parse(userIdClaim.Value);
             var rate = new Rate
             {
                 Value = _value,
@@ -99,11 +84,12 @@
                 Entertainment = _isEntertainmentSet ? _value : null,
                 Plot = _isPlotSet ? _value : null,
                 MovieId = MovieId,
-                UserId = _userId.Value
+                UserId = userId
             };
-            if (_isRated)
+            var isRated = Rate.Rates.FirstOrDefault(x => x.MovieId == MovieId && x.UserId == userId) != null;
+            if (isRated)
             {
-                var rateId = Rate.Rates.First(x => x.MovieId == MovieId && x.UserId == _userId).Id;
+                var rateId = Rate.Rates.First(x => x.MovieId == MovieId && x.UserId == userId).Id;
                 rate.Id = rateId;
                 await _rateService.PutRateAsync(rate);
             }
@@ -113,16 +99,6 @@
             }
             await OnRate.InvokeAsync();
             await _modal.Hide();
-        }
-    }
-
-    public void ApplyRateText()
-    {
-
-        _isRated = Rate.Rates.FirstOrDefault(x => x.MovieId == MovieId && x.UserId == _userId) != null;
-        if (_isRated)
-        {
-            _rate = "Rerate";
         }
     }
 }

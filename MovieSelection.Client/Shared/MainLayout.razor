@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager _navigation
+@inject IMovieService _movieService
 
 <Layout>
     <LayoutHeader>
@@ -8,6 +10,26 @@
             </BarBrand>
             <BarToggler />
             <BarMenu>
+                <BarStart>
+                    <BarItem>
+                        <div class="input-group rounded">
+                            <Autocomplete TItem="string"
+                                          TValue="string"
+                                          Data="@_movieNames"
+                                          TextField="@(( item ) => item)"
+                                          ValueField="@(( item ) => item)"
+                                          @bind-SelectedValue="@_name"
+                                          Placeholder="Search..."
+                                          Filter="AutocompleteFilter.Contains"
+                                          FreeTyping>
+                                <NotFoundContent> Sorry... @context was not found! :( </NotFoundContent>
+                            </Autocomplete>
+                            <Button Clicked="OnSearchStarted">
+                                <Icon Name="IconName.Search"/>
+                            </Button>
+                        </div>
+                    </BarItem>
+                </BarStart>
                 <BarEnd>
                     <BarItem>
                         <LoginDisplay/>
@@ -24,3 +46,25 @@
         <a href="https://www.instagram.com/neverherox"><img class="img-thumbnail" width="35" src="logos/inst.png"/></a>
     </LayoutFooter>
 </Layout>
+
+@code{
+    private string _name;
+    private IEnumerable<string> _movieNames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _movieNames = await _movieService.GetMovieNamesAsync();
+    }
+
+    private void OnSearchStarted()
+    {
+        if (string.IsNullOrWhiteSpace(_name))
+        {
+            _navigation.NavigateTo($"movies");
+        }
+        else
+        {
+            _navigation.NavigateTo($"movies/{_name}");
+        }
+    }
+}

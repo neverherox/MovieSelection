@@ -1,4 +1,6 @@
-﻿namespace MovieSelection.Models.RequestModels
+﻿using MovieSelection.Models.Entities;
+
+namespace MovieSelection.Models.RequestModels
 {
     public class GetMovie
     {
@@ -10,10 +12,12 @@
 
         public int Year { get; set; }
 
-        public string Country { get; set; }
+        public Country Country { get; set; }
 
-        public IEnumerable<string> Genres { get; set; }
+        public IEnumerable<Genre> Genres { get; set; }
 
         public byte[] Image { get; set; }
+
+        public double Rate { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Api.Controllers
 {
@@ -18,9 +19,17 @@ namespace MovieSelection.Api.Controllers
 
         // GET: api/Genres
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
+        public async Task<ActionResult<IEnumerable<GetGenre>>> GetGenres()
         {
-            return await _context.Genres.ToListAsync();
+            return await _context.Genres
+                .Where(x => x.ParentId == null)
+                .Select(x => new GetGenre
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Subgenres = _context.Genres.Where(y => y.ParentId == x.Id).ToList()
+                })
+                .ToListAsync();
         }
 
         // GET: api/Genres/5

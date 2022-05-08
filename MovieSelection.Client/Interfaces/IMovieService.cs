@@ -5,7 +5,7 @@ namespace MovieSelection.Client.Interfaces
 {
     public interface IMovieService
     {
-        Task<IEnumerable<Movie>> GetMoviesAsync();
+        Task<IEnumerable<GetMovie>> GetMoviesAsync();
 
         Task<GetMovie> GetMovieAsync(int id);
 
@@ -14,5 +14,7 @@ namespace MovieSelection.Client.Interfaces
         Task<IEnumerable<GetReview>> GetReviewsAsync(int id);
 
         Task<GetRate> GetRateAsync(int id);
+
+        Task<IEnumerable<string>> GetMovieNamesAsync();
     }
 }

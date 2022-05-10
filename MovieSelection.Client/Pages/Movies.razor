@@ -1,6 +1,9 @@
 ﻿@page "/movies"
 @page "/movies/{Name}"
+@page "/movies/highly-rated"
+@page "/movies/novelties"
 
+@inject NavigationManager _navigation
 @inject IMovieService _movieService
 @inject IGenreService _genreService
 @inject ICountryService _countryService
@@ -69,8 +72,7 @@
 </CardDeck>
 
 @code {
-    [Parameter]
-    public string Name { get; set; }
+    [Parameter] public string Name { get; set; }
 
     private IEnumerable<GetMovie> _movies;
     private IEnumerable<GetMovie> _filteredMovies;
@@ -82,7 +84,18 @@
     protected override async Task OnInitializedAsync()
     {
         Initialise();
-        _movies = await _movieService.GetMoviesAsync();
+        if (_navigation.Uri.Contains("highly-rated"))
+        {
+            _movies = await _movieService.GetHighlyRatedMoviesAsync(100);
+        }
+        else if (_navigation.Uri.Contains("novelties"))
+        {
+            _movies = await _movieService.GetNoveltiesAsync(100);
+        }
+        else
+        {
+            _movies = await _movieService.GetMoviesAsync();
+        }
         _filteredMovies = _movieFilterService.ApplyFilters(_movies);
         _genres = await _genreService.GetGenresAsync();
         _countries = await _countryService.GetCountriesAsync();

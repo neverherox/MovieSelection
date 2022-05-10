@@ -1,13 +1,38 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@inject NavigationManager _navigation
+@inject IMovieService _movieService
 
-<h1>Hello, world!</h1>
+<CardDeck>
+    @foreach (var movie in _highlyRatedMovies)
+    {
+        <MovieCard Movie="@movie"></MovieCard>
+    }
+    <Button Type="ButtonType.Link" To="movies/highly-rated">Show more</Button>
+</CardDeck>
 
-<div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div>
+<CardDeck>
+    @foreach (var movie in _novelties)
+    {
+        <MovieCard Movie="@movie"></MovieCard>
+    }
+    <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
+</CardDeck>
 
-Welcome to your new app.
+@code{
+    private IEnumerable<GetMovie> _highlyRatedMovies;
+    private IEnumerable<GetMovie> _novelties;
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    protected override async Task OnInitializedAsync()
+    {
+        Initialise();
+        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
+        _novelties = await _movieService.GetNoveltiesAsync(1);
+    }
+
+    private void Initialise()
+    {
+        _highlyRatedMovies = new List<GetMovie>();
+        _novelties = new List<GetMovie>();
+    }
+}

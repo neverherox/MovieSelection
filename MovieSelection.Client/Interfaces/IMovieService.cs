@@ -16,5 +16,9 @@ namespace MovieSelection.Client.Interfaces
         Task<GetRate> GetRateAsync(int id);
 
         Task<IEnumerable<string>> GetMovieNamesAsync();
+
+        Task<IEnumerable<GetMovie>> GetHighlyRatedMoviesAsync(int top);
+
+        Task<IEnumerable<GetMovie>> GetNoveltiesAsync(int top);
     }
 }

@@ -35,7 +35,7 @@ namespace MovieSelection.Api.Controllers
                     Year = x.Year,
                     Country = x.Country,
                     Genres = x.MovieGenres.Where(y => y.MovieId == x.Id).Select(y => y.Genre).ToList(),
-                    Rate =  _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
                 }).ToListAsync();
         }
 
@@ -148,7 +148,7 @@ namespace MovieSelection.Api.Controllers
                     Id = x.Id,
                     Text = x.Text,
                     UserName = x.User.Name,
-                    ReviewDate = x.ReviewDate, 
+                    ReviewDate = x.ReviewDate,
                     Likes = x.ReviewLikes,
                     LikesCount = x.ReviewLikes.Count(y => y.Like) - x.ReviewLikes.Count(y => !y.Like)
                 })
@@ -213,6 +213,49 @@ namespace MovieSelection.Api.Controllers
         {
             return await _context.Movies
                 .Select(x => x.Name)
+                .ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("/api/highly-rated/{top}")]
+        public async Task<ActionResult<IEnumerable<GetMovie>>> GetHighlyRated(int top)
+        {
+            return await _context
+                .Rates
+                .OrderByDescending(x => x.Value)
+                .Select(x => new GetMovie
+                {
+                    Id = x.Movie.Id,
+                    Name = x.Movie.Name,
+                    Description = x.Movie.Description,
+                    Image = x.Movie.Image,
+                    Year = x.Movie.Year,
+                    Country = x.Movie.Country,
+                    Genres = x.Movie.MovieGenres.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                })
+                .Take(top)
+                .ToListAsync();
+        }
+
+        [HttpGet]
+        [Route("/api/novelties/{top}")]
+        public async Task<ActionResult<IEnumerable<GetMovie>>> GetNovelties(int top)
+        {
+            return await _context.Movies
+                .OrderByDescending(x => x.Year)
+                .Select(x => new GetMovie
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Image = x.Image,
+                    Year = x.Year,
+                    Country = x.Country,
+                    Genres = x.MovieGenres.Where(y => y.MovieId == x.Id).Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                })
+                .Take(top)
                 .ToListAsync();
         }
 

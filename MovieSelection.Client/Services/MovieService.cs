@@ -46,5 +46,17 @@ namespace MovieSelection.Client.Services
             var movieNames = await PublicClient.GetFromJsonAsync<IEnumerable<string>>("movie-names");
             return movieNames;
         }
+
+        public async Task<IEnumerable<GetMovie>> GetHighlyRatedMoviesAsync(int top)
+        {
+            var movies = await PublicClient.GetFromJsonAsync<IEnumerable<GetMovie>>($"highly-rated/{top}");
+            return movies;
+        }
+
+        public async Task<IEnumerable<GetMovie>> GetNoveltiesAsync(int top)
+        {
+            var movies = await PublicClient.GetFromJsonAsync<IEnumerable<GetMovie>>($"novelties/{top}");
+            return movies;
+        }
     }
 }

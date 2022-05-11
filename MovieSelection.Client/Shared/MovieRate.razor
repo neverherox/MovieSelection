@@ -76,25 +76,28 @@
             var identity = User.Identity as ClaimsIdentity;
             var userIdClaim = identity.Claims.First(x => x.Type == "sub");
             var userId = Guid.Parse(userIdClaim.Value);
-            var rate = new Rate
+            var userRate = Rate.Rates.FirstOrDefault(x => x.MovieId == MovieId && x.UserId == userId);
+            if (userRate != null)
             {
-                Value = _value,
-                Directing = _isDirectingSet ? _value : null,
-                Actors = _isActorsSet ? _value : null,
-                Entertainment = _isEntertainmentSet ? _value : null,
-                Plot = _isPlotSet ? _value : null,
-                MovieId = MovieId,
-                UserId = userId
-            };
-            var isRated = Rate.Rates.FirstOrDefault(x => x.MovieId == MovieId && x.UserId == userId) != null;
-            if (isRated)
-            {
-                var rateId = Rate.Rates.First(x => x.MovieId == MovieId && x.UserId == userId).Id;
-                rate.Id = rateId;
-                await _rateService.PutRateAsync(rate);
+                userRate.Value = _value;
+                userRate.Directing = _isDirectingSet ? _value : null;
+                userRate.Actors = _isActorsSet ? _value : null;
+                userRate.Entertainment = _isEntertainmentSet ? _value : null;
+                userRate.Plot = _isPlotSet ? _value : null;
+                await _rateService.PutRateAsync(userRate);
             }
             else
             {
+                var rate = new PostRate
+                {
+                    Value = _value,
+                    Directing = _isDirectingSet ? _value : null,
+                    Actors = _isActorsSet ? _value : null,
+                    Entertainment = _isEntertainmentSet ? _value : null,
+                    Plot = _isPlotSet ? _value : null,
+                    MovieId = MovieId,
+                    UserId = userId
+                };
                 await _rateService.PostRateAsync(rate);
             }
             await OnRate.InvokeAsync();

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using MovieSelection.Client.Interfaces;
 using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Client.Services
 {
@@ -10,7 +11,7 @@ namespace MovieSelection.Client.Services
         {
         }
 
-        public async Task PostRateAsync(Rate rate)
+        public async Task PostRateAsync(PostRate rate)
         {
             await PrivateClient.PostAsJsonAsync("rates", rate);
         }

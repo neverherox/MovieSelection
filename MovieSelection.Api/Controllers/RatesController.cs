@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
+using MovieSelection.Models.RequestModels;
 
 namespace MovieSelection.Api.Controllers
 {
@@ -11,10 +13,13 @@ namespace MovieSelection.Api.Controllers
     public class RatesController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
+        private readonly IMapper _mapper;
 
-        public RatesController(MovieSelectionContext context)
+        public RatesController(MovieSelectionContext context, 
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Rates
@@ -41,14 +46,14 @@ namespace MovieSelection.Api.Controllers
         // PUT: api/Rates/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRate(int id, Rate rate)
+        public async Task<IActionResult> PutRate(int id, PutRate rate)
         {
             if (id != rate.Id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(rate).State = EntityState.Modified;
+            var entityRate = _mapper.Map<Rate>(rate);
+            _context.Entry(entityRate).State = EntityState.Modified;
 
             try
             {
@@ -73,12 +78,13 @@ namespace MovieSelection.Api.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = "user")]
-        public async Task<ActionResult<Rate>> PostRate(Rate rate)
+        public async Task<ActionResult<Rate>> PostRate(PostRate rate)
         {
-            _context.Rates.Add(rate);
+            var rateEntity = _mapper.Map<Rate>(rate);
+            _context.Rates.Add(rateEntity);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRate", new { id = rate.Id }, rate);
+            return CreatedAtAction("GetRate", new { id = rateEntity.Id }, rateEntity);
         }
 
         // DELETE: api/Rates/5

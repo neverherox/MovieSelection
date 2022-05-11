@@ -60,13 +60,7 @@
 
     private void OnSearchStarted()
     {
-        if (string.IsNullOrWhiteSpace(_name))
-        {
-            _navigation.NavigateTo($"movies");
-        }
-        else
-        {
-            _navigation.NavigateTo($"movies/{_name}");
-        }
+        _name ??= "all";
+        _navigation.NavigateTo($"movies/{_name}");
     }
 }

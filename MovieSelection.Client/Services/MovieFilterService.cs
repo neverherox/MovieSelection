@@ -53,6 +53,7 @@ namespace MovieSelection.Client.Services
             MaxRate = 10;
             MinYear = 2001;
             MaxYear = 2022;
+            Name = null;
         }
     }
 }

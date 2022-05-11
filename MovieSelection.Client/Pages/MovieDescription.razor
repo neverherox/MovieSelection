@@ -2,9 +2,12 @@
 @inject IMovieService _movieService
 
 <Div>
-    <Figure Size="FigureSize.Is512x512">
-        <FigureImage Source="logos/movie.png" />
-    </Figure>
+    <Div Display="Display.InlineBlock">
+        <Figure Size="FigureSize.Is512x512" Display="Display.Block" Height="Height.Is25">
+            <FigureImage Source="logos/movie.svg"/>
+        </Figure>
+        <button class="fas fa-bookmark @_saveStyle" @onclick="() => SaveMovieAsync()" style="float: right;"></button>
+    </Div>
     <Div Display="Display.InlineBlock">
         <h1>@_movie.Name</h1>
         @_movie.Description<br>
@@ -34,6 +37,8 @@
     private IEnumerable<Actor> _actors;
     private IEnumerable<GetReview> _reviews;
     private ClaimsPrincipal _user;
+    private bool _isSaved;
+    private string _saveStyle = "not-saved";
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,6 +59,12 @@
     protected virtual async Task OnReviewedAsync()
     {
         _reviews = await _movieService.GetReviewsAsync(Id);
+    }
+
+    private void SaveMovieAsync()
+    {
+        _isSaved = !_isSaved;
+        _saveStyle = _isSaved ? "saved" : "not-saved";
     }
 
     private void Initialise()

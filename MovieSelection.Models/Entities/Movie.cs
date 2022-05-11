@@ -17,4 +17,6 @@ public class Movie
     public Country Country { get; set; }
 
     public ICollection<MovieGenre> MovieGenres { get; set; }
+
+    public ICollection<Saving> Savings { get; set; }
 }

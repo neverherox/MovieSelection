@@ -1,11 +1,9 @@
 ﻿.like {
     color: green;
-    border: none;
 }
 
 .dislike {
     color: red;
-    border: none;
 }
 
 button {

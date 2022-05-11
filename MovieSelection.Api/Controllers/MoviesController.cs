@@ -25,7 +25,7 @@ namespace MovieSelection.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetMovie>>> GetMovies()
         {
-            return await _context.Movies
+            var movies =  await _context.Movies
                 .Select(x => new GetMovie
                 {
                     Id = x.Id,
@@ -34,9 +34,11 @@ namespace MovieSelection.Api.Controllers
                     Image = x.Image,
                     Year = x.Year,
                     Country = x.Country,
-                    Genres = x.MovieGenres.Where(y => y.MovieId == x.Id).Select(y => y.Genre).ToList(),
-                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                    Genres = x.MovieGenres.Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                    Savings = x.Savings.ToList()
                 }).ToListAsync();
+            return movies;
         }
 
         // GET: api/Movies/5
@@ -47,6 +49,7 @@ namespace MovieSelection.Api.Controllers
                 .Include(x => x.Country)
                 .Include(x => x.MovieGenres)
                 .ThenInclude(x => x.Genre)
+                .Include(x => x.Savings)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (movie == null)
@@ -62,7 +65,8 @@ namespace MovieSelection.Api.Controllers
                 Image = movie.Image,
                 Year = movie.Year,
                 Country = movie.Country,
-                Genres = movie.MovieGenres.Where(x => x.MovieId == id).Select(x => x.Genre).ToList()
+                Genres = movie.MovieGenres.Select(x => x.Genre).ToList(),
+                Savings = movie.Savings.ToList()
             };
 
             return getMovie;
@@ -231,8 +235,9 @@ namespace MovieSelection.Api.Controllers
                     Image = x.Movie.Image,
                     Year = x.Movie.Year,
                     Country = x.Movie.Country,
-                    Genres = x.Movie.MovieGenres.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Genre).ToList(),
-                    Rate = _context.Rates.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                    Genres = x.Movie.MovieGenres.Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                    Savings = x.Movie.Savings.ToList()
                 })
                 .Take(top)
                 .ToListAsync();
@@ -252,8 +257,9 @@ namespace MovieSelection.Api.Controllers
                     Image = x.Image,
                     Year = x.Year,
                     Country = x.Country,
-                    Genres = x.MovieGenres.Where(y => y.MovieId == x.Id).Select(y => y.Genre).ToList(),
-                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average()
+                    Genres = x.MovieGenres.Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                    Savings = x.Savings.ToList()
                 })
                 .Take(top)
                 .ToListAsync();

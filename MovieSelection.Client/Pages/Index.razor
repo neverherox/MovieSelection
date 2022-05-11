@@ -6,7 +6,7 @@
 <CardDeck>
     @foreach (var movie in _highlyRatedMovies)
     {
-        <MovieCard Movie="@movie"></MovieCard>
+        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
     }
     <Button Type="ButtonType.Link" To="movies/highly-rated">Show more</Button>
 </CardDeck>
@@ -14,18 +14,29 @@
 <CardDeck>
     @foreach (var movie in _novelties)
     {
-        <MovieCard Movie="@movie"></MovieCard>
+        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
     }
     <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
 </CardDeck>
 
 @code{
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
     private IEnumerable<GetMovie> _highlyRatedMovies;
     private IEnumerable<GetMovie> _novelties;
+    private ClaimsPrincipal _user;
 
     protected override async Task OnInitializedAsync()
     {
         Initialise();
+        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
+        _novelties = await _movieService.GetNoveltiesAsync(1);
+        var authState = await authenticationStateTask;
+        _user = authState.User;
+    }
+
+    protected virtual async Task OnSavedAsync()
+    {
         _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
         _novelties = await _movieService.GetNoveltiesAsync(1);
     }
@@ -34,5 +45,6 @@
     {
         _highlyRatedMovies = new List<GetMovie>();
         _novelties = new List<GetMovie>();
+        _user = new ClaimsPrincipal();
     }
 }

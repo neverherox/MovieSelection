@@ -19,5 +19,7 @@ namespace MovieSelection.Models.RequestModels
         public byte[] Image { get; set; }
 
         public double Rate { get; set; }
+
+        public IEnumerable<Saving> Savings { get; set; }
     }
 }

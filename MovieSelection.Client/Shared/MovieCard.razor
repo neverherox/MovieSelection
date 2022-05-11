@@ -1,18 +1,85 @@
-﻿<Card>
-    <CardImage Source="logos/movie.png"/>
+﻿@inject ISavingService _savingService
+@inject NavigationManager _navigation
+
+<Card>
+    <CardImage Source="logos/movie.svg" />
     <CardBody>
         <CardLink Source=@($"/movie/{Movie.Id}")>@Movie.Name</CardLink>
         <CardText>
             @Movie.Description
         </CardText>
+        <CardFooter>
+            <button class="fas fa-bookmark @_saveStyle" @onclick="() => SaveMovieAsync()" style="float:right"></button>
+        </CardFooter>
     </CardBody>
 </Card>
 @code {
+
     [Parameter] public GetMovie Movie { get; set; }
+    [Parameter] public ClaimsPrincipal User { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+
     private string _imageSrc;
+    private string _saveStyle;
+    private Guid? _userId;
 
     protected override async Task OnInitializedAsync()
     {
         _imageSrc = "data:image/png;base64," + Convert.ToBase64String(Movie.Image);
+        ApplySaveStyle();
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
+        {
+            var identity = User.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            _userId = Guid.Parse(userIdClaim.Value);
+        }
     }
+
+    protected override void OnParametersSet()
+    {
+        ApplySaveStyle();
+    }
+
+    private async Task SaveMovieAsync()
+    {
+        if (_userId.HasValue)
+        {
+            var userSaving = Movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == Movie.Id);
+            if (userSaving == null)
+            {
+                var saving = new PostSaving
+                    {
+                        UserId = _userId.Value,
+                        MovieId = Movie.Id
+                    };
+                await _savingService.PostSavingAsync(saving);
+            }
+            else
+            {
+                await _savingService.DeleteSavingAsync(userSaving.Id);
+            }
+            await OnSave.InvokeAsync();
+        }
+        else
+        {
+            _navigation.NavigateTo("authentication/login");
+        }
+    }
+
+    public void ApplySaveStyle()
+    {
+        if (_userId.HasValue)
+        {
+            var userSaving = Movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == Movie.Id);
+            if (userSaving == null)
+            {
+                _saveStyle = "not-saved";
+            }
+            else
+            {
+                _saveStyle = "saved";
+            }
+        }
+    }
+
 }

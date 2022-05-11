@@ -33,6 +33,7 @@ public class MovieSelectionContext : DbContext
         modelBuilder.ApplyConfiguration(new ReviewConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new ReviewLikeConfiguration());
+        modelBuilder.ApplyConfiguration(new SavingConfiguration());
     }
 
     public virtual DbSet<Actor> Actors { get; set; }
@@ -54,4 +55,6 @@ public class MovieSelectionContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<ReviewLike> ReviewLikes { get; set; }
+
+    public virtual DbSet<Saving> Savings { get; set; }
 }

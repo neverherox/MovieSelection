@@ -1,5 +1,4 @@
-﻿@page "/movies"
-@page "/movies/{Name}"
+﻿@page "/movies/{Name}"
 @page "/movies/highly-rated"
 @page "/movies/novelties"
 
@@ -67,12 +66,13 @@
 <CardDeck>
     @foreach (var movie in _filteredMovies)
     {
-        <MovieCard Movie="@movie"></MovieCard>
+        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
     }
 </CardDeck>
 
 @code {
     [Parameter] public string Name { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private IEnumerable<GetMovie> _movies;
     private IEnumerable<GetMovie> _filteredMovies;
@@ -80,6 +80,7 @@
     private IEnumerable<Genre> _subgenres;
     private IEnumerable<Country> _countries;
     private bool _isSubgenresDisabled = true;
+    private ClaimsPrincipal _user;
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,11 +106,21 @@
             _subgenres = selectedGenre.Subgenres;
             _isSubgenresDisabled = !_subgenres.Any();
         }
+        var authState = await authenticationStateTask;
+        _user = authState.User;
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        _movieFilterService.Name = Name;
+        if (Name == "all")
+        {
+            _movies = await _movieService.GetMoviesAsync();
+            _movieFilterService.ResetFilters();
+        }
+        else
+        {
+            _movieFilterService.Name = Name;
+        }
         _filteredMovies = _movieFilterService.ApplyFilters(_movies);
     }
 
@@ -178,6 +189,23 @@
         _filteredMovies = _movieFilterService.ApplyFilters(_movies);
     }
 
+    protected virtual async Task OnSavedAsync()
+    {
+        if (_navigation.Uri.Contains("highly-rated"))
+        {
+            _movies = await _movieService.GetHighlyRatedMoviesAsync(100);
+        }
+        else if (_navigation.Uri.Contains("novelties"))
+        {
+            _movies = await _movieService.GetNoveltiesAsync(100);
+        }
+        else
+        {
+            _movies = await _movieService.GetMoviesAsync();
+        }
+        _filteredMovies = _movieFilterService.ApplyFilters(_movies);
+    }
+
     private void Initialise()
     {
         _movies = new List<GetMovie>();
@@ -185,5 +213,6 @@
         _genres = new List<GetGenre>();
         _subgenres = new List<Genre>();
         _countries = new List<Country>();
+        _user = new ClaimsPrincipal();
     }
 }

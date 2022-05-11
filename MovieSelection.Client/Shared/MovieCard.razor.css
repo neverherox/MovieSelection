@@ -1,0 +1,11 @@
+﻿.not-saved {
+    color: gray;
+}
+
+.saved {
+    color: black;
+}
+
+button {
+    border: none;
+}

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieSelection.Data.Context;
 
@@ -11,9 +12,10 @@ using MovieSelection.Data.Context;
 namespace MovieSelection.Data.Migrations
 {
     [DbContext(typeof(MovieSelectionContext))]
-    partial class MovieSelectionContextModelSnapshot : ModelSnapshot
+    [Migration("20220510195857_AddSaving")]
+    partial class AddSaving
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,23 +245,15 @@ namespace MovieSelection.Data.Migrations
 
             modelBuilder.Entity("MovieSelection.Models.Entities.Saving", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "MovieId");
 
                     b.HasIndex("MovieId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Savings");
                 });
@@ -363,27 +357,17 @@ namespace MovieSelection.Data.Migrations
             modelBuilder.Entity("MovieSelection.Models.Entities.Saving", b =>
                 {
                     b.HasOne("MovieSelection.Models.Entities.Movie", "Movie")
-                        .WithMany("Savings")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieSelection.Models.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Movie");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MovieSelection.Models.Entities.Movie", b =>
                 {
                     b.Navigation("MovieGenres");
-
-                    b.Navigation("Savings");
                 });
 
             modelBuilder.Entity("MovieSelection.Models.Entities.Review", b =>

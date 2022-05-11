@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using IdentityServer4;
+using Microsoft.AspNetCore.Authentication;
 using MovieSelection.Identity.Data;
 using MovieSelection.Identity.Models;
 
@@ -79,6 +80,7 @@ namespace MovieSelection.Identity
                     // set the redirect URI to https://localhost:5001/signin-google
                     options.ClientId = Configuration["Authentication:Google:ClientId"];
                     options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    options.ClaimActions.MapJsonKey("image", "picture");
                 });
         }
 

@@ -3,7 +3,10 @@
 
 <AuthorizeView>
     <Authorized>
-        <Button Color = "Color.Link" @onclick="BeginSignOut">Log out</Button>
+        <Link To=@($"user-profile/{context.User.Claims.FirstOrDefault(x => x.Type == "sub")?.Value}")>
+            <Image Source=@(context.User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value ?? "logos/person.svg") Style="width:30px"/>
+        </Link>
+        <Button Color="Color.Link" @onclick="BeginSignOut">Log out</Button>
     </Authorized>
     <NotAuthorized>
         <Button Color = "Color.Link" Type="ButtonType.Link" To="authentication/login">Log in</Button>

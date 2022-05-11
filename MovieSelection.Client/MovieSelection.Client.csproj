@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\logos\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MovieSelection.Models\MovieSelection.Models.csproj" />
   </ItemGroup>
 

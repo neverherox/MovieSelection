@@ -26,7 +26,7 @@ namespace MovieSelection.Identity
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
-                new ApiResource("movieSelectionApi", "The MovieSelection API", new[] { JwtClaimTypes.Role, JwtClaimTypes.Name })
+                new ApiResource("movieSelectionApi", "The MovieSelection API", new[] { JwtClaimTypes.Role, JwtClaimTypes.Name, JwtClaimTypes.Picture })
                 {
                     Scopes = { "movieSelectionApi" }
                 }

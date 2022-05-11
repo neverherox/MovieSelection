@@ -1,5 +1,8 @@
 ﻿@page "/movie/{Id:int}"
+
 @inject IMovieService _movieService
+@inject ISavingService _savingService
+@inject NavigationManager _navigation
 
 <Div>
     <Div Display="Display.InlineBlock">
@@ -39,6 +42,7 @@
     private ClaimsPrincipal _user;
     private bool _isSaved;
     private string _saveStyle = "not-saved";
+    private Guid? _userId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,6 +53,13 @@
         _reviews = await _movieService.GetReviewsAsync(Id);
         var authState = await authenticationStateTask;
         _user = authState.User;
+        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        {
+            var identity = _user.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            _userId = Guid.Parse(userIdClaim.Value);
+        }
+        ApplySaveStyle();
     }
 
     protected virtual async Task OnRatedAsync()
@@ -61,10 +72,47 @@
         _reviews = await _movieService.GetReviewsAsync(Id);
     }
 
-    private void SaveMovieAsync()
+    private async Task SaveMovieAsync()
     {
-        _isSaved = !_isSaved;
-        _saveStyle = _isSaved ? "saved" : "not-saved";
+        if (_userId.HasValue)
+        {
+            var userSaving = _movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == _movie.Id);
+            if (userSaving == null)
+            {
+                var saving = new PostSaving
+                {
+                    UserId = _userId.Value,
+                    MovieId = _movie.Id
+                };
+                await _savingService.PostSavingAsync(saving);
+            }
+            else
+            {
+                await _savingService.DeleteSavingAsync(userSaving.Id);
+            }
+            _movie = await _movieService.GetMovieAsync(Id);
+            ApplySaveStyle();
+        }
+        else
+        {
+            _navigation.NavigateTo("authentication/login");
+        }
+    }
+
+    public void ApplySaveStyle()
+    {
+        if (_userId.HasValue)
+        {
+            var userSaving = _movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == _movie.Id);
+            if (userSaving == null)
+            {
+                _saveStyle = "";
+            }
+            else
+            {
+                _saveStyle = "saved";
+            }
+        }
     }
 
     private void Initialise()

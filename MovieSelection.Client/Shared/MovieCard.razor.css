@@ -1,11 +1,8 @@
-﻿.not-saved {
-    color: gray;
-}
-
-.saved {
+﻿.saved {
     color: black;
 }
 
 button {
     border: none;
+    color: gray;
 }

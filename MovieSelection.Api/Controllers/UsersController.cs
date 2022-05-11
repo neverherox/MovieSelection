@@ -97,7 +97,6 @@ namespace MovieSelection.Api.Controllers
             return NoContent();
         }
 
-        // GET: api/Users/5
         [HttpGet("{id}/savings")]
         [Authorize(Roles = "user")]
         public async Task<ActionResult<IEnumerable<GetSaving>>> GetSavings(Guid id)
@@ -105,7 +104,21 @@ namespace MovieSelection.Api.Controllers
             return await _context
                 .Savings
                 .Where(x => x.UserId == id)
-                .Select(x => new GetSaving())
+                .Select(x => new GetSaving
+                {
+                    Movie = new GetMovie
+                    {
+                        Id = x.Movie.Id,
+                        Name = x.Movie.Name,
+                        Description = x.Movie.Description,
+                        Image = x.Movie.Image,
+                        Year = x.Movie.Year,
+                        Country = x.Movie.Country,
+                        Genres = x.Movie.MovieGenres.Select(y => y.Genre).ToList(),
+                        Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                        Savings = x.Movie.Savings.ToList()
+                    }
+                })
                 .ToListAsync();
         }
 

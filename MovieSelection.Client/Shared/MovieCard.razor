@@ -73,7 +73,7 @@
             var userSaving = Movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == Movie.Id);
             if (userSaving == null)
             {
-                _saveStyle = "not-saved";
+                _saveStyle = "";
             }
             else
             {

@@ -1,5 +1,39 @@
 ﻿@page "/user-profile/{Id}"
 
+@inject IUserService _userService
+
+<CardDeck>
+    @foreach (var saving in _savings)
+    {
+        <MovieCard Movie="@saving.Movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+    }
+</CardDeck>
+
 @code {
     [Parameter] public string Id { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private IEnumerable<GetSaving> _savings;
+    private Guid _id;
+    private ClaimsPrincipal _user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Initialise();
+        _id = Guid.Parse(Id);
+        _savings = await _userService.GetSavingsAsync(_id);
+        var authState = await authenticationStateTask;
+        _user = authState.User;
+    }
+
+    protected virtual async Task OnSavedAsync()
+    {
+        _savings = await _userService.GetSavingsAsync(_id);
+    }
+
+    private void Initialise()
+    {
+        _savings = new List<GetSaving>();
+        _user = new ClaimsPrincipal();
+    }
 }

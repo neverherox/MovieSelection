@@ -10,7 +10,7 @@ namespace MovieSelection.Client.Services
         {
         }
 
-        public async Task<IEnumerable<GetSaving>> GetSavingsAsync(int id)
+        public async Task<IEnumerable<GetSaving>> GetSavingsAsync(Guid id)
         {
             var savings = await PrivateClient.GetFromJsonAsync<IEnumerable<GetSaving>>($"users/{id}/savings");
             return savings;

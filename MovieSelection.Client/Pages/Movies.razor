@@ -115,7 +115,7 @@
         if (Name == "all")
         {
             _movies = await _movieService.GetMoviesAsync();
-            _movieFilterService.ResetFilters();
+            _movieFilterService.Name = null;
         }
         else
         {

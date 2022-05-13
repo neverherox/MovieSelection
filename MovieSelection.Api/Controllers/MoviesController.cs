@@ -222,11 +222,21 @@ namespace MovieSelection.Api.Controllers
 
         [HttpGet]
         [Route("/api/highly-rated/{top}")]
-        public async Task<ActionResult<IEnumerable<GetMovie>>> GetHighlyRated(int top)
+        public ActionResult<IEnumerable<GetMovie>> GetHighlyRated(int top)
         {
-            return await _context
+            var highlyRated =  _context
                 .Rates
-                .OrderByDescending(x => x.Value)
+                .Include(x => x.Movie)
+                .ThenInclude(x => x.Savings)
+                .ThenInclude(x => x.User)
+                .Include(x => x.Movie)
+                .ThenInclude(x => x.MovieGenres)
+                .ThenInclude(x => x.Genre)
+                .Include(x => x.Movie)
+                .ThenInclude(x => x.Country)
+                .GroupBy(x => x.MovieId)
+                .Select(x => x.First())
+                .ToList()
                 .Select(x => new GetMovie
                 {
                     Id = x.Movie.Id,
@@ -239,8 +249,10 @@ namespace MovieSelection.Api.Controllers
                     Rate = _context.Rates.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
                     Savings = x.Movie.Savings.ToList()
                 })
+                .OrderByDescending(x => x.Rate)
                 .Take(top)
-                .ToListAsync();
+                .ToList();
+            return highlyRated;
         }
 
         [HttpGet]
@@ -249,6 +261,7 @@ namespace MovieSelection.Api.Controllers
         {
             return await _context.Movies
                 .OrderByDescending(x => x.Year)
+                .Take(top)
                 .Select(x => new GetMovie
                 {
                     Id = x.Id,
@@ -261,7 +274,6 @@ namespace MovieSelection.Api.Controllers
                     Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
                     Savings = x.Savings.ToList()
                 })
-                .Take(top)
                 .ToListAsync();
         }
 

@@ -3,23 +3,30 @@
 @inject NavigationManager _navigation
 @inject IMovieService _movieService
 
-<CardDeck>
-    @foreach (var movie in _highlyRatedMovies)
-    {
-        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-    }
-    <Button Type="ButtonType.Link" To="movies/highly-rated">Show more</Button>
-</CardDeck>
+<Div>
+    <Div>
+        <p>Highly rated</p>
+        <CardDeck>
+            @foreach (var movie in _highlyRatedMovies)
+            {
+                <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+            }
+            <Button Type="ButtonType.Link" To="movies/highly-rated">Show more</Button>
+        </CardDeck>
+    </Div>
+    <Div>
+        <p>Novelties</p>
+        <CardDeck>
+            @foreach (var movie in _novelties)
+            {
+                <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+            }
+            <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
+        </CardDeck>
+    </Div>
+</Div>
 
-<CardDeck>
-    @foreach (var movie in _novelties)
-    {
-        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-    }
-    <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
-</CardDeck>
-
-@code{
+@code {
     [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private IEnumerable<GetMovie> _highlyRatedMovies;

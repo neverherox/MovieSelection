@@ -1,39 +1,107 @@
 ﻿@page "/user-profile/{Id}"
 
 @inject IUserService _userService
+@inject ISavingService _savingService
+@inject IMovieService _movieService
 
-<CardDeck>
-    @foreach (var saving in _savings)
-    {
-        <MovieCard Movie="@saving.Movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-    }
-</CardDeck>
+<h1>Hello @_user.Identity?.Name</h1>
+
+<Tabs SelectedTab="@_selectedTab" SelectedTabChanged="@OnSelectedTabChangedAsync" RenderMode="TabsRenderMode.LazyReload">
+    <Items>
+        <Tab Name="savings">Savings</Tab>
+        <Tab Name="rates">Rates</Tab>
+    </Items>
+    <Content>
+        <TabPanel Name="savings">
+            <DropContainer TItem="GetSaving" Items="@_savings" ItemsFilter="@((item, dropZone) => (item.IsWatched ? _watched : _willWatch) == dropZone)" ItemDropped="@ItemDroppedAsync" Flex="Flex.Wrap.Grow.Is1">
+                <ChildContent>
+                    <DropZone TItem="GetSaving" Name="@_willWatch" DropAllowed="@((item) => item.IsWatched)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+                        <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_willWatch</Heading>
+                    </DropZone>
+                    <DropZone TItem="GetSaving" Name="@_watched" DropAllowed="@((item) => !item.IsWatched)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+                        <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_watched</Heading>
+                    </DropZone>
+                </ChildContent>
+                <ItemTemplate>
+                    <CardDeck>
+                        <MovieCard Movie="@context.Movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+                    </CardDeck>
+                </ItemTemplate>
+            </DropContainer>
+        </TabPanel>
+        <TabPanel Name="rates">
+            <MovieFilter @bind-Movies="@_rateMovies" AllMovies="@_allRateMovies"></MovieFilter>
+            <CardDeck>
+                @foreach (var movie in _rateMovies)
+                {
+                    <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+                }
+            </CardDeck>
+        </TabPanel>
+    </Content>
+</Tabs>
 
 @code {
     [Parameter] public string Id { get; set; }
     [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     private IEnumerable<GetSaving> _savings;
+    private IEnumerable<GetUserRate> _rates;
+    private IEnumerable<GetMovie> _rateMovies;
+    private IEnumerable<GetMovie> _allRateMovies;
     private Guid _id;
     private ClaimsPrincipal _user;
+    private string _selectedTab = "savings";
+    private string _willWatch = "Will watch";
+    private string _watched = "Watched";
 
     protected override async Task OnInitializedAsync()
     {
         Initialise();
         _id = Guid.Parse(Id);
         _savings = await _userService.GetSavingsAsync(_id);
+        _rates = await _userService.GetRatesAsync(_id);
+        _allRateMovies = _rates.Select(x => x.Movie).ToList();
         var authState = await authenticationStateTask;
         _user = authState.User;
     }
 
-    protected virtual async Task OnSavedAsync()
+    protected virtual async Task OnSavedAsync(int movieId)
     {
-        _savings = await _userService.GetSavingsAsync(_id);
+        var getMovie = await _movieService.GetMovieAsync(movieId);
+        var movie = _rateMovies.First(x => x.Id == movieId);
+        movie.Savings = getMovie.Savings.ToList();
+    }
+
+    private async Task OnSelectedTabChangedAsync(string name)
+    {
+        _selectedTab = name;
+        if (name == "savings")
+        {
+            _savings = await _userService.GetSavingsAsync(_id);
+        }
+    }
+
+    private async Task ItemDroppedAsync(DraggableDroppedEventArgs<GetSaving> saving)
+    {
+        var getSaving = saving.Item;
+        getSaving.IsWatched = saving.DropZoneName == _watched;
+        var putSaving = new PutSaving
+        {
+            Id = getSaving.Id,
+            IsWatched = getSaving.IsWatched,
+            MovieId = getSaving.Movie.Id,
+            UserId = _id
+        };
+        await _savingService.PutReviewLikeAsync(putSaving);
     }
 
     private void Initialise()
     {
         _savings = new List<GetSaving>();
+        _rates = new List<GetUserRate>();
+        _rateMovies = new List<GetMovie>();
+        _allRateMovies = new List<GetMovie>();
         _user = new ClaimsPrincipal();
     }
 }

@@ -4,8 +4,6 @@ namespace MovieSelection.Client.Interfaces
 {
     public interface IMovieFilterService
     {
-        public string Name { get; set; }
-
         public int GenreId { get; set; }
 
         public int SubgenreId { get; set; }

@@ -17,7 +17,7 @@
 
     [Parameter] public GetMovie Movie { get; set; }
     [Parameter] public ClaimsPrincipal User { get; set; }
-    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback<int> OnSave { get; set; }
 
     private string _imageSrc;
     private string _saveStyle;
@@ -58,7 +58,7 @@
             {
                 await _savingService.DeleteSavingAsync(userSaving.Id);
             }
-            await OnSave.InvokeAsync();
+            await OnSave.InvokeAsync(Movie.Id);
         }
         else
         {

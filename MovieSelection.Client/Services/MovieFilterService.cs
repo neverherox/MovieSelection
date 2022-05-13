@@ -5,8 +5,6 @@ namespace MovieSelection.Client.Services
 {
     public class MovieFilterService : IMovieFilterService
     {
-        public string Name { get; set; }
-
         public int GenreId { get; set; }
 
         public int SubgenreId { get; set; }
@@ -23,10 +21,6 @@ namespace MovieSelection.Client.Services
 
         public IEnumerable<GetMovie> ApplyFilters(IEnumerable<GetMovie> movies)
         {
-            if (!string.IsNullOrEmpty(Name))
-            {
-                movies = movies.Where(x => x.Name.Contains(Name));
-            }
             if (GenreId != 0)
             {
                 movies = movies.Where(x => x.Genres.Any(y => y.Id == GenreId));
@@ -53,7 +47,6 @@ namespace MovieSelection.Client.Services
             MaxRate = 10;
             MinYear = 2001;
             MaxYear = 2022;
-            Name = null;
         }
     }
 }

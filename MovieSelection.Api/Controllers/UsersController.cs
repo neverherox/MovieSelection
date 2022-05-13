@@ -124,6 +124,35 @@ namespace MovieSelection.Api.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("{id}/rates")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<IEnumerable<GetUserRate>>> GetRates(Guid id)
+        {
+            return await _context
+                .Rates
+                .Where(x => x.UserId == id)
+                .Select(x => new GetUserRate
+                {
+                    Directing = x.Directing,
+                    Entertainment = x.Entertainment,
+                    Actors = x.Actors,
+                    Plot = x.Plot,
+                    Value = x.Value,
+                    Movie = new GetMovie
+                    {
+                        Id = x.Movie.Id,
+                        Name = x.Movie.Name,
+                        Description = x.Movie.Description,
+                        Image = x.Movie.Image,
+                        Year = x.Movie.Year,
+                        Country = x.Movie.Country,
+                        Genres = x.Movie.MovieGenres.Select(y => y.Genre).ToList(),
+                        Rate = _context.Rates.Where(y => y.MovieId == x.Movie.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                        Savings = x.Movie.Savings.ToList()
+                    }
+                }).ToListAsync();
+        }
+
         private bool UserExists(Guid id)
         {
             return _context.Users.Any(e => e.Id == id);

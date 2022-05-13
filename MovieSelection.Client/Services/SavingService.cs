@@ -15,6 +15,11 @@ namespace MovieSelection.Client.Services
             await PrivateClient.PostAsJsonAsync("savings", saving);
         }
 
+        public async Task PutReviewLikeAsync(PutSaving saving)
+        {
+            await PrivateClient.PutAsJsonAsync($"savings/{saving.Id}", saving);
+        }
+
         public async Task DeleteSavingAsync(int id)
         {
             await PrivateClient.DeleteAsync($"savings/{id}");

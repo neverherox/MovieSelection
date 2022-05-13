@@ -106,6 +106,7 @@ namespace MovieSelection.Api.Controllers
                 .Where(x => x.UserId == id)
                 .Select(x => new GetSaving
                 {
+                    Id = x.Id,
                     Movie = new GetMovie
                     {
                         Id = x.Movie.Id,
@@ -117,7 +118,8 @@ namespace MovieSelection.Api.Controllers
                         Genres = x.Movie.MovieGenres.Select(y => y.Genre).ToList(),
                         Rate = _context.Rates.Where(y => y.MovieId == x.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
                         Savings = x.Movie.Savings.ToList()
-                    }
+                    },
+                    IsWatched = x.IsWatched
                 })
                 .ToListAsync();
         }

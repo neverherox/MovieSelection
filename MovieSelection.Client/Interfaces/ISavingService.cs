@@ -6,6 +6,8 @@ namespace MovieSelection.Client.Interfaces
     {
         Task PostSavingAsync(PostSaving saving);
 
+        Task PutReviewLikeAsync(PutSaving saving);
+
         Task DeleteSavingAsync(int id);
     }
 }

@@ -11,5 +11,7 @@
         public Movie Movie { get; set; }
 
         public User User { get; set; }
+
+        public bool IsWatched { get; set; }
     }
 }

@@ -46,14 +46,15 @@ namespace MovieSelection.Api.Controllers
         // PUT: api/Savings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSaving(int id, Saving saving)
+        public async Task<IActionResult> PutSaving(int id, PutSaving saving)
         {
             if (id != saving.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(saving).State = EntityState.Modified;
+            var savingEntity = _mapper.Map<Saving>(saving);
+            _context.Entry(savingEntity).State = EntityState.Modified;
 
             try
             {

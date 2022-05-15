@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ML;
 using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
 using MovieSelection.Models.RequestModels;
+using MovieSelection_Api.MLModel;
 
 namespace MovieSelection.Api.Controllers
 {
@@ -12,10 +14,13 @@ namespace MovieSelection.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly MovieSelectionContext _context;
+        private readonly PredictionEnginePool<RateMLModel.ModelInput, RateMLModel.ModelOutput> _predictionEnginePool;
 
-        public UsersController(MovieSelectionContext context)
+        public UsersController(MovieSelectionContext context,
+            PredictionEnginePool<RateMLModel.ModelInput, RateMLModel.ModelOutput> predictionEnginePool)
         {
             _context = context;
+            _predictionEnginePool = predictionEnginePool;
         }
 
         // GET: api/Users
@@ -151,6 +156,18 @@ namespace MovieSelection.Api.Controllers
                         Savings = x.Movie.Savings.ToList()
                     }
                 }).ToListAsync();
+        }
+
+        [HttpPost("{id}/predict")]
+        public ActionResult<RateMLModel.ModelOutput> GetRecommendations(Guid id)
+        {
+            var input = new RateMLModel.ModelInput
+            {
+                UserId = id.ToString(),
+                MovieId = 20
+            };
+            var prediction = _predictionEnginePool.Predict(input);
+            return prediction;
         }
 
         private bool UserExists(Guid id)

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ML;
 using MovieSelection.Api.Extensions;
 using MovieSelection.Data.Context;
+using MovieSelection_Api.MLModel;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +27,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddPredictionEnginePool<RateMLModel.ModelInput, RateMLModel.ModelOutput>()
+    .FromFile("MLModels/RateMLModel.zip", watchForChanges: true);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

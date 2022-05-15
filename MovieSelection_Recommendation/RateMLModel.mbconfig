@@ -1,0 +1,100 @@
+﻿{
+  "TrainingTime": 60,
+  "Scenario": "Recommendation",
+  "DataSource": {
+    "Type": "SQL",
+    "Version": 1,
+    "ColumnProperties": [
+      {
+        "ColumnName": "Id",
+        "ColumnPurpose": "Ignore",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "Directing",
+        "ColumnPurpose": "Ignore",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "Entertainment",
+        "ColumnPurpose": "Ignore",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "Actors",
+        "ColumnPurpose": "Ignore",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "Plot",
+        "ColumnPurpose": "Ignore",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "Value",
+        "ColumnPurpose": "Label",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "MovieId",
+        "ColumnPurpose": "Item",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      },
+      {
+        "ColumnName": "UserId",
+        "ColumnPurpose": "User",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 1
+      }
+    ],
+    "ConnectionString": "Data Source=EPBYGROW00E8;Initial Catalog=MovieSelection;Integrated Security=True",
+    "CommandString": "SELECT CAST(Id as REAL), CAST(Directing as REAL), CAST(Entertainment as REAL), CAST(Actors as REAL), CAST(Plot as REAL), CAST(Value as REAL), CAST(MovieId as REAL), UserId FROM [dbo].[Rates]",
+    "DatabaseName": "MovieSelection",
+    "SelectedTableDbo": "dbo",
+    "TableName": "Rates"
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 0,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 0,
+        "Type": "Trial",
+        "TrainerName": "MatrixFactorization",
+        "Score": 0.0,
+        "RuntimeInSeconds": 0.9
+      }
+    ],
+    "Pipeline": "[{\"EstimatorType\":\"MapValueToKey\",\"Inputs\":[\"MovieId\"],\"Outputs\":[\"MovieId\"]},{\"EstimatorType\":\"MapValueToKey\",\"Inputs\":[\"UserId\"],\"Outputs\":[\"UserId\"]},{\"LabelColumnName\":\"Value\",\"MatrixColumnIndexColumnName\":\"UserId\",\"MatrixRowIndexColumnName\":\"MovieId\",\"EstimatorType\":\"MatrixFactorization\",\"Inputs\":[\"Features\"],\"Outputs\":[\"Score\"]}]",
+    "MetricName": "RSquared"
+  },
+  "Type": "TrainingConfig",
+  "Version": 1
+}

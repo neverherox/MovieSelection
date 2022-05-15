@@ -2,6 +2,7 @@
 
 @inject NavigationManager _navigation
 @inject IMovieService _movieService
+@inject IUserService _userService
 
 <Div>
     <Div>
@@ -24,6 +25,27 @@
             <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
         </CardDeck>
     </Div>
+    <AuthorizeView>
+        <Authorized>
+            <Div>
+                <p>For you</p>
+                @if (_recommendations.Any())
+                {
+                    <CardDeck>
+                        @foreach (var movie in _recommendations)
+                        {
+                            <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+                        }
+                        <Button Type="ButtonType.Link" To="movies/recommendations">Show more</Button>
+                    </CardDeck>
+                }
+                else
+                {
+                    <p>Please rate some movies, so we can calculate recommendations for you</p>
+                }
+            </Div>
+        </Authorized>
+    </AuthorizeView>
 </Div>
 
 @code {
@@ -31,15 +53,23 @@
 
     private IEnumerable<GetMovie> _highlyRatedMovies;
     private IEnumerable<GetMovie> _novelties;
+    private IEnumerable<GetMovie> _recommendations;
     private ClaimsPrincipal _user;
 
     protected override async Task OnInitializedAsync()
     {
         Initialise();
-        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
-        _novelties = await _movieService.GetNoveltiesAsync(1);
         var authState = await authenticationStateTask;
         _user = authState.User;
+        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
+        _novelties = await _movieService.GetNoveltiesAsync(1);
+        if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+        {
+            var identity = _user.Identity as ClaimsIdentity;
+            var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+            var userId = Guid.Parse(userIdClaim.Value);
+            _recommendations = await _userService.GetRecommendationsAsync(userId, 1);
+        }
     }
 
     protected virtual async Task OnSavedAsync()
@@ -52,6 +82,7 @@
     {
         _highlyRatedMovies = new List<GetMovie>();
         _novelties = new List<GetMovie>();
+        _recommendations = new List<GetMovie>();
         _user = new ClaimsPrincipal();
     }
 }

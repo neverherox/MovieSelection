@@ -7,5 +7,7 @@ namespace MovieSelection.Client.Interfaces
         Task<IEnumerable<GetSaving>> GetSavingsAsync(Guid id);
 
         Task<IEnumerable<GetUserRate>> GetRatesAsync(Guid id);
+
+        Task<IEnumerable<GetMovie>> GetRecommendationsAsync(Guid id, int top);
     }
 }

@@ -6,6 +6,7 @@ using MovieSelection.Data.Context;
 using MovieSelection.Models.Entities;
 using MovieSelection.Models.RequestModels;
 using MovieSelection_Api.MLModel;
+using System.Linq;
 
 namespace MovieSelection.Api.Controllers
 {
@@ -158,16 +159,73 @@ namespace MovieSelection.Api.Controllers
                 }).ToListAsync();
         }
 
-        [HttpPost("{id}/predict")]
-        public ActionResult<RateMLModel.ModelOutput> GetRecommendations(Guid id)
+        [HttpGet("{id}/recommendations/{top}")]
+        [Authorize(Roles = "user")]
+        public async Task<ActionResult<IEnumerable<GetMovie>>> GetRecommendations(Guid id, int top)
         {
-            var input = new RateMLModel.ModelInput
+            var userId = id.ToString();
+
+            var allMovieIds = await _context.Rates
+                .Select(x => x.MovieId)
+                .Distinct()
+                .ToListAsync();
+
+            var ratedMovieIds = await _context
+                .Rates
+                .Where(x => x.UserId == id)
+                .Select(x => x.MovieId)
+                .Distinct()
+                .ToListAsync();
+
+            var notRatedMovieIds = allMovieIds
+                .Except(ratedMovieIds)
+                .ToList();
+
+            var rateInputs = notRatedMovieIds
+                .Select(x => new RateMLModel.ModelInput
+                {
+                    UserId = userId,
+                    MovieId = x
+                })
+                .ToList();
+
+            var predictions = new Dictionary<int,RateMLModel.ModelOutput>();
+            foreach (var rateInput in rateInputs)
             {
-                UserId = id.ToString(),
-                MovieId = 20
-            };
-            var prediction = _predictionEnginePool.Predict(input);
-            return prediction;
+                var prediction = _predictionEnginePool.Predict(rateInput);
+                if (prediction.Score > 8)
+                {
+                    var intMovieId = Convert.ToInt32(rateInput.MovieId);
+                    predictions.Add(intMovieId, prediction);
+                }
+            }
+            
+            var recommendations = new List<GetMovie>();
+            foreach (var prediction in predictions.OrderByDescending(x => x.Value.Score).Take(top))
+            {
+                var movie = await _context.Movies
+                    .Include(x => x.Country)
+                    .Include(x => x.MovieGenres)
+                    .ThenInclude(x => x.Genre)
+                    .Include(x => x.Savings)
+                    .FirstAsync(x => x.Id == prediction.Key);
+
+                var recommendedMovie = new GetMovie
+                {
+                    Id = movie.Id,
+                    Name = movie.Name,
+                    Description = movie.Description,
+                    Image = movie.Image,
+                    Year = movie.Year,
+                    Country = movie.Country,
+                    Genres = movie.MovieGenres.Select(y => y.Genre).ToList(),
+                    Rate = _context.Rates.Where(y => y.MovieId == movie.Id).Select(y => y.Value).DefaultIfEmpty().Average(),
+                    Savings = movie.Savings.ToList()
+                };
+                recommendations.Add(recommendedMovie);
+            }
+        
+            return recommendations;
         }
 
         private bool UserExists(Guid id)

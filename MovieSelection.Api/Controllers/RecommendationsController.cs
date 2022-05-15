@@ -17,7 +17,7 @@ namespace MovieSelection.Api.Controllers
             _context = context;
         }
 
-        [HttpGet("retrain")]
+        [HttpPost("retrain")]
         public ActionResult RetrainModel()
         {
             var mlContext = new MLContext();

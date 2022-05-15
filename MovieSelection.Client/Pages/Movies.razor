@@ -1,9 +1,11 @@
 ﻿@page "/movies/{Name}"
 @page "/movies/highly-rated"
 @page "/movies/novelties"
+@page "/movies/recommendations"
 
 @inject NavigationManager _navigation
 @inject IMovieService _movieService
+@inject IUserService _userService
 
 <PageTitle>Movies</PageTitle>
 
@@ -27,6 +29,8 @@
     protected override async Task OnInitializedAsync()
     {
         Initialise();
+        var authState = await authenticationStateTask;
+        _user = authState.User;
         if (_navigation.Uri.Contains("highly-rated"))
         {
             _allMovies = await _movieService.GetHighlyRatedMoviesAsync(100);
@@ -35,12 +39,20 @@
         {
             _allMovies = await _movieService.GetNoveltiesAsync(100);
         }
+        else if (_navigation.Uri.Contains("recommendations"))
+        {
+            if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
+            {
+                var identity = _user.Identity as ClaimsIdentity;
+                var userIdClaim = identity.Claims.First(x => x.Type == "sub");
+                var userId = Guid.Parse(userIdClaim.Value);
+                _allMovies = await _userService.GetRecommendationsAsync(userId, 100);
+            }
+        }
         else
         {
             _allMovies = await _movieService.GetMoviesAsync();
         }
-        var authState = await authenticationStateTask;
-        _user = authState.User;
     }
 
     protected override void OnParametersSet()

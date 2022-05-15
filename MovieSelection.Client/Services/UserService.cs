@@ -21,5 +21,11 @@ namespace MovieSelection.Client.Services
             var rates = await PrivateClient.GetFromJsonAsync<IEnumerable<GetUserRate>>($"users/{id}/rates");
             return rates;
         }
+
+        public async Task<IEnumerable<GetMovie>> GetRecommendationsAsync(Guid id, int top)
+        {
+            var movies = await PrivateClient.GetFromJsonAsync<IEnumerable<GetMovie>>($"users/{id}/recommendations/{top}");
+            return movies;
+        }
     }
 }

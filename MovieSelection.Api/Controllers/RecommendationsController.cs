@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.ML;
 using MovieSelection.Data.Context;
@@ -17,24 +17,29 @@ namespace MovieSelection.Api.Controllers
             _context = context;
         }
 
-        [HttpPost("retrain")]
+        [HttpGet("retrain")]
+        [Authorize(Roles = "user")]
         public ActionResult RetrainModel()
         {
             var mlContext = new MLContext();
             var rates = _context.Rates.ToList();
-            var rateInputs = new List<RateMLModel.ModelInput>();
-            foreach(var rate in rates)
+            if (rates.Any())
             {
-                rateInputs.Add(new RateMLModel.ModelInput
+                var rateInputs = new List<RateMLModel.ModelInput>();
+                foreach (var rate in rates)
                 {
-                    MovieId = rate.MovieId,
-                    UserId = rate.UserId.ToString(),
-                    Value = rate.Value
-                });
+                    rateInputs.Add(new RateMLModel.ModelInput
+                    {
+                        MovieId = rate.MovieId,
+                        UserId = rate.UserId.ToString(),
+                        Value = rate.Value
+                    });
+                }
+
+                var data = mlContext.Data.LoadFromEnumerable(rateInputs);
+                var retrainedModel = RateMLModel.RetrainPipeline(mlContext, data);
+                mlContext.Model.Save(retrainedModel, data.Schema, "MLModels/RateMLModel.zip");
             }
-            var data = mlContext.Data.LoadFromEnumerable(rateInputs);
-            var retrainedModel = RateMLModel.RetrainPipeline(mlContext, data);
-            mlContext.Model.Save(retrainedModel, data.Schema, "MLModels/RateMLModel.zip");
             return Ok();
         }
     }

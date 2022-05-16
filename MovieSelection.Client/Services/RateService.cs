@@ -14,11 +14,13 @@ namespace MovieSelection.Client.Services
         public async Task PostRateAsync(PostRate rate)
         {
             await PrivateClient.PostAsJsonAsync("rates", rate);
+            await PrivateClient.GetAsync("recommendations/retrain");
         }
 
         public async Task PutRateAsync(Rate rate)
         {
             await PrivateClient.PutAsJsonAsync($"rates/{rate.Id}", rate);
+            await PrivateClient.GetAsync("recommendations/retrain");
         }
     }
 }

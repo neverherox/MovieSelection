@@ -9,14 +9,17 @@
 
 <PageTitle>Movies</PageTitle>
 
+<div style="margin-bottom:10px">
 <MovieFilter @bind-Movies="@_movies" AllMovies="@_allMovies"></MovieFilter>
-
-<CardDeck>
+</div>
+<div class="row row row-cols-1 row-cols-sm-2 row-cols-md-4  row-cols-xl-6 g-3">
     @foreach (var movie in _movies)
     {
-        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+        <div class="col">
+            <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+        </div>
     }
-</CardDeck>
+</div>
 
 @code {
     [Parameter] public string Name { get; set; }

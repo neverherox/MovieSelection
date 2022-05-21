@@ -1,8 +1,28 @@
-﻿.saved {
-    color: black;
-}
-
-button {
+﻿button {
     border: none;
     color: gray;
 }
+
+a {
+    color:black;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+img {
+    width: 10%;
+    vertical-align: middle;
+}
+
+span {
+    vertical-align: middle;
+}
+
+
+

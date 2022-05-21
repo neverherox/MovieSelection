@@ -1,31 +1,42 @@
 ﻿@inject ISavingService _savingService
 @inject NavigationManager _navigation
+@inject IMovieService _movieService
 
-<Card>
-    <CardImage Source="logos/movie.svg" />
-    <CardBody>
-        <CardLink Source=@($"/movie/{Movie.Id}")>@Movie.Name</CardLink>
-        <CardText>
-            @Movie.Description
+<Card Height="Height.Is100">
+    <CardImage Source=@("data:image/png;base64," + Convert.ToBase64String(Movie.Image)) Style="height:65%"/>
+    <CardBody Style="height:35%" TextOverflow="TextOverflow.Truncate">
+        <CardTitle Size="5">
+            <a href=@($"/movie/{Movie.Id}")>@Movie.Name</a>
+            <Icon Name="IconName.Bookmark" Class="@_saveStyle" @onclick="() => SaveMovieAsync()" Style="float:right" />
+        </CardTitle>
+        <CardSubtitle Size="5">
+            <div>
+                <img src="logos/MovieCard/rating.svg">
+                <span>@Math.Round(_rate.Value, 1)</span>
+            </div>
+        </CardSubtitle>
+        <CardText Class="lh-sm" TextOverflow="TextOverflow.Truncate">
+            @Movie.Year,<br>
+            @Movie.Country.Name,<br>
+            @_genres
         </CardText>
-        <CardFooter>
-            <button class="fas fa-bookmark @_saveStyle" @onclick="() => SaveMovieAsync()" style="float:right"></button>
-        </CardFooter>
     </CardBody>
 </Card>
+
 @code {
 
     [Parameter] public GetMovie Movie { get; set; }
     [Parameter] public ClaimsPrincipal User { get; set; }
     [Parameter] public EventCallback<int> OnSave { get; set; }
 
-    private string _imageSrc;
-    private string _saveStyle;
+    private string _saveStyle = "not-saved";
     private Guid? _userId;
+    private string _genres;
+    private GetRate _rate;
 
     protected override async Task OnInitializedAsync()
     {
-        _imageSrc = "data:image/png;base64," + Convert.ToBase64String(Movie.Image);
+        Initialise();
         ApplySaveStyle();
         if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("user"))
         {
@@ -33,6 +44,8 @@
             var userIdClaim = identity.Claims.First(x => x.Type == "sub");
             _userId = Guid.Parse(userIdClaim.Value);
         }
+        _rate = await _movieService.GetRateAsync(Movie.Id);
+        _genres = string.Join(", ", Movie.Genres.Select(x => x.Name));
     }
 
     protected override void OnParametersSet()
@@ -73,7 +86,7 @@
             var userSaving = Movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == Movie.Id);
             if (userSaving == null)
             {
-                _saveStyle = "";
+                _saveStyle = "not-saved";
             }
             else
             {
@@ -82,4 +95,18 @@
         }
     }
 
+    private void Initialise()
+    {
+        _rate = new GetRate();
+    }
 }
+
+<style>
+    .saved {
+        color: black;
+    }
+
+    .not-saved {
+        color: lightgray;
+    }
+</style>

@@ -5,43 +5,18 @@
 @inject IUserService _userService
 
 <Div>
-    <Div>
-        <p>Highly rated</p>
-        <CardDeck>
-            @foreach (var movie in _highlyRatedMovies)
-            {
-                <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-            }
-            <Button Type="ButtonType.Link" To="movies/highly-rated">Show more</Button>
-        </CardDeck>
-    </Div>
-    <Div>
-        <p>Novelties</p>
-        <CardDeck>
-            @foreach (var movie in _novelties)
-            {
-                <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-            }
-            <Button Type="ButtonType.Link" To="movies/novelties">Show more</Button>
-        </CardDeck>
-    </Div>
+    <ShowMoreMovies Movies="@_highlyRatedMovies" Name="Highly rated" ShowMoreUrl="movies/highly-rated" OnSave="OnSavedAsync" User="@_user"></ShowMoreMovies>
+    <ShowMoreMovies Movies="@_novelties" Name="Novelties" ShowMoreUrl="movies/novelties" OnSave="OnSavedAsync" User="@_user"></ShowMoreMovies>
     <AuthorizeView>
         <Authorized>
             <Div>
-                <p>For you</p>
                 @if (_recommendations.Any())
                 {
-                    <CardDeck>
-                        @foreach (var movie in _recommendations)
-                        {
-                            <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-                        }
-                        <Button Type="ButtonType.Link" To="movies/recommendations">Show more</Button>
-                    </CardDeck>
+                    <ShowMoreMovies Movies="@_recommendations" Name="For you" ShowMoreUrl="movies/recommendations" OnSave="OnSavedAsync" User="@_user"></ShowMoreMovies>
                 }
                 else
                 {
-                    <p>Please rate some movies, so we can calculate recommendations for you</p>
+                    <h1>Please rate some movies, so we can calculate recommendations for you</h1>
                 }
             </Div>
         </Authorized>
@@ -55,27 +30,32 @@
     private IEnumerable<GetMovie> _novelties;
     private IEnumerable<GetMovie> _recommendations;
     private ClaimsPrincipal _user;
+    private Guid? _userId;
 
     protected override async Task OnInitializedAsync()
     {
         Initialise();
         var authState = await authenticationStateTask;
         _user = authState.User;
-        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
-        _novelties = await _movieService.GetNoveltiesAsync(1);
+        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(5);
+        _novelties = await _movieService.GetNoveltiesAsync(5);
         if (_user.Identity != null && _user.Identity.IsAuthenticated && _user.IsInRole("user"))
         {
             var identity = _user.Identity as ClaimsIdentity;
             var userIdClaim = identity.Claims.First(x => x.Type == "sub");
-            var userId = Guid.Parse(userIdClaim.Value);
-            _recommendations = await _userService.GetRecommendationsAsync(userId, 1);
+            _userId = Guid.Parse(userIdClaim.Value);
+            _recommendations = await _userService.GetRecommendationsAsync(_userId.Value, 5);
         }
     }
 
     protected virtual async Task OnSavedAsync()
     {
-        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(1);
-        _novelties = await _movieService.GetNoveltiesAsync(1);
+        _highlyRatedMovies = await _movieService.GetHighlyRatedMoviesAsync(5);
+        _novelties = await _movieService.GetNoveltiesAsync(5);
+        if (_userId.HasValue)
+        {
+            _recommendations = await _userService.GetRecommendationsAsync(_userId.Value, 5);
+        }
     }
 
     private void Initialise()

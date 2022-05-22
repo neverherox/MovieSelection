@@ -1,0 +1,40 @@
+﻿<Div>
+    <h2>@Name</h2>
+    <div class="row row row-cols-1 row-cols-sm-2 row-cols-md-4  row-cols-xl-6 g-3">
+        @foreach (var movie in Movies)
+        {
+            <div class="col">
+                <MovieCard Movie="@movie" User="@User" OnSave="OnSavedAsync"></MovieCard>
+            </div>
+        }
+        <div class="col">
+            <Card Height="Height.Is100" Width="Width.Is100" Display="Display.Table">
+                <Button Type="ButtonType.Link" To="@ShowMoreUrl" Height="Height.Is100" Class="show-more">
+                    Show more
+                </Button>
+            </Card>
+        </div>
+    </div>
+</Div>
+
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string ShowMoreUrl { get; set; }
+    [Parameter] public IEnumerable<GetMovie> Movies { get; set; }
+    [Parameter] public ClaimsPrincipal User { get; set; }
+    [Parameter] public EventCallback<int> OnSave { get; set; }
+
+
+    protected virtual async Task OnSavedAsync()
+    {
+        await OnSave.InvokeAsync();
+    }
+}
+
+<style>
+    .show-more {
+        text-align: center;
+        display: table-cell;
+        vertical-align: middle;
+    }
+</style>

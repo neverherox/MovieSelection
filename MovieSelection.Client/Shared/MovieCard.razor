@@ -7,7 +7,7 @@
     <CardBody Style="height:35%" TextOverflow="TextOverflow.Truncate">
         <CardTitle Size="5">
             <a href=@($"/movie/{Movie.Id}")>@Movie.Name</a>
-            <Icon Name="IconName.Bookmark" Class="@_saveStyle" @onclick="() => SaveMovieAsync()" Style="float:right" />
+            <Icon Name="IconName.Bookmark" Class=@(_saveStyle + " " + "save-cursor") @onclick="() => SaveMovieAsync()" Style="float:right" />
         </CardTitle>
         <CardSubtitle Size="5">
             <div>
@@ -108,5 +108,13 @@
 
     .not-saved {
         color: lightgray;
+    }
+
+    .save-cursor {
+
+    }
+
+    .save-cursor:hover {
+        cursor: pointer;
     }
 </style>

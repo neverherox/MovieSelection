@@ -1,27 +1,32 @@
 ﻿@inject IReviewService _reviewService
 @inject NavigationManager _navigation
 
-<CardDeck>
-    @foreach (var review in Reviews)
-    {
-        <MovieReview Review="@review" User = "@User" OnLike="OnLikedAsync"/>
-    }
-</CardDeck>
-<Div Display="Display.Block" Width="Width.Is100">
-    <Button Block Clicked="@ShowModal">Review</Button>
-</Div>
+<h2>Reviews</h2>
 
+<Div>
+    <div class="row row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-6 g-3">
+        @foreach (var review in Reviews)
+        {
+            <div class="col">
+                <MovieReview Review="@review" User="@User" OnLike="OnLikedAsync" />
+            </div>
+        }
+    </div>
+    <Div Display="Display.Block" Style="max-width:400px">
+        <Button Block Clicked="@ShowModal" Border="Border.Is1" Margin="Margin.Is1">Review</Button>
+    </Div>
+</Div>
 <Modal @ref="_modal">
     <ModalContent Size="ModalSize.Default" Centered>
         <ModalHeader>
-            <CloseButton/>
+            <CloseButton />
         </ModalHeader>
         <ModalBody>
             <Validations Mode="ValidationMode.Auto" @ref="_validations" Model="@_review">
                 <Validation>
                     <TextEdit @bind-Text="@_review.Text" Placeholder="Your review">
                         <Feedback>
-                            <ValidationError/>
+                            <ValidationError />
                         </Feedback>
                     </TextEdit>
                 </Validation>

@@ -1,0 +1,12 @@
+﻿<h2>Actors</h2>
+
+@foreach (var actor in Actors.Concat(Actors).Concat(Actors))
+{
+    <Div Display="Display.InlineBlock" Margin="Margin.Is1">
+        <MovieSelection.Client.Shared.MovieActor Actor="@actor" />
+    </Div>
+}
+
+@code {
+    [Parameter] public IEnumerable<Actor> Actors { get; set; }
+}

@@ -1,8 +1,16 @@
 ﻿@inject IRateService _rateService
 @inject NavigationManager _navigation
 
-<Div Display="Display.Flex" Style="width:400px; flex-wrap: wrap">
-    <Div Display="Display.InlineBlock" Width="Width.Is25">@Math.Round(Rate.Value, 1) <br> @Rate.ValuesCount rates</Div>
+<h2>Rates</h2>
+
+<Div Display="Display.Flex" Style="max-width:400px; flex-wrap: wrap">
+    <Div Display="Display.InlineBlock" Width="Width.Is25">
+        <div>
+            <img src="logos/MovieCard/rating.svg">
+            <span>@Math.Round(Rate.Value, 1)</span>
+        </div>
+        <span>@Rate.ValuesCount rates</span>
+    </Div>
     <Div Display="Display.InlineBlock" Width="Width.Is75">
         <Div>
             Directing: <Progress Size="Size.Small" Min="0" Max="10" Value="@Convert.ToInt32(Rate.Directing)"></Progress>
@@ -17,10 +25,9 @@
             Plot: <Progress Size="Size.Small" Min="0" Max="10" Value="@Convert.ToInt32(Rate.Plot)"></Progress>
         </Div>
     </Div>
-    <Div Display="Display.Block" Width="Width.Is100">
-        <Button Block Clicked="@ShowModal">Rate</Button>
+    <Div Display="Display.Block" Width="Width.Is100" Margin="Margin.Is1">
+        <Button Block Clicked="@ShowModal" Border="Border.Is1">Rate</Button>
     </Div>
-
 </Div>
 
 <Modal @ref="_modal">
@@ -89,15 +96,15 @@
             else
             {
                 var rate = new PostRate
-                {
-                    Value = _value,
-                    Directing = _isDirectingSet ? _value : null,
-                    Actors = _isActorsSet ? _value : null,
-                    Entertainment = _isEntertainmentSet ? _value : null,
-                    Plot = _isPlotSet ? _value : null,
-                    MovieId = MovieId,
-                    UserId = userId
-                };
+                    {
+                        Value = _value,
+                        Directing = _isDirectingSet ? _value : null,
+                        Actors = _isActorsSet ? _value : null,
+                        Entertainment = _isEntertainmentSet ? _value : null,
+                        Plot = _isPlotSet ? _value : null,
+                        MovieId = MovieId,
+                        UserId = userId
+                    };
                 await _rateService.PostRateAsync(rate);
             }
             await OnRate.InvokeAsync();

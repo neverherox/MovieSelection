@@ -1,14 +1,20 @@
-﻿<Figure Size="FigureSize.Is256x256">
-    <FigureImage Source="logos/person.svg"/>
-    <FigureCaption>@_fullName</FigureCaption>
-</Figure>
+﻿<Div TextAlignment="TextAlignment.Center">
+    <Image Source=@("data:image/png;base64," + Convert.ToBase64String(Actor.Image)) Class="rounded-circle actor" Border="Border.Is1" />
+    <span class="figure-caption" style="display: block; text-align:start">
+        @Actor.FirstName<br>
+        @Actor.LastName
+    </span>
+</Div>
 
 @code {
     [Parameter] public Actor Actor { get; set; }
-    private string _fullName;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _fullName = string.Join(' ', Actor.FirstName, Actor.LastName);
-    }
 }
+
+<style>
+    .actor {
+        width:100px;
+        height: 100px;
+        object-fit:cover;
+        object-position:50% 50%;
+    }
+</style>

@@ -4,32 +4,37 @@
 @inject ISavingService _savingService
 @inject NavigationManager _navigation
 
-<Div>
-    <Div Display="Display.InlineBlock">
-        <Figure Size="FigureSize.Is512x512" Display="Display.Block" Height="Height.Is25">
-            <FigureImage Source="logos/movie.svg"/>
-        </Figure>
-        <button class="fas fa-bookmark @_saveStyle" @onclick="() => SaveMovieAsync()" style="float: right;"></button>
-    </Div>
-    <Div Display="Display.InlineBlock">
+<div style="display:flex">
+    <div style="display:inline-block; width:30%">
+        <div>
+            <img src=@("data:image/png;base64," + Convert.ToBase64String(_movie.Image)) class="img-fluid" style="max-height:450px;" />
+        </div>
+        <Button Clicked="SaveMovieAsync" Border="Border.Is1" Margin="Margin.Is1">
+            <Icon Name="IconName.Bookmark" class="@_saveStyle"></Icon> Save movie
+        </Button>
+    </div>
+    <div style="display:inline-block; width: 70%;" align="center" class="lh-sm">
         <h1>@_movie.Name</h1>
-        @_movie.Description<br>
-        @_movie.Country.Name<br>
-        @_movie.Year<br>
-        @foreach (var genre in _movie.Genres)
-        {
-            @genre.Name<br>
-        }
-    </Div>
-</Div>
-<MovieRate Rate="@_rate" MovieId="@Id" OnRate="OnRatedAsync" User = "@_user" ></MovieRate>
+        <span>@_movie.Year</span><br>
+        <span>@_movie.Country.Name</span><br>
+        <span>@string.Join(", ", _movie.Genres.Select(x => x.Name))</span>
+        <p>
+            @_movie.Description
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Cras fermentum odio eu feugiat pretium nibh ipsum consequat. Pulvinar etiam non quam lacus suspendisse faucibus interdum posuere. Nunc sed velit dignissim sodales ut. Mi bibendum neque egestas congue quisque egestas diam in arcu. Quis vel eros donec ac odio tempor. Fermentum posuere urna nec tincidunt praesent. Eget velit aliquet sagittis id consectetur. Molestie at elementum eu facilisis sed odio morbi quis commodo. Ut consequat semper viverra nam libero justo laoreet sit.
+        </p>
+    </div>
+</div>
+<Divider />
+
+<MovieRate Rate="@_rate" MovieId="@Id" OnRate="OnRatedAsync" User="@_user"></MovieRate>
+
+<Divider />
 
 <MovieReviews Reviews="@_reviews" MovieId="@Id" OnReview="OnReviewedAsync" User="@_user"></MovieReviews>
 
-@foreach (var actor in _actors)
-{
-    <MovieSelection.Client.Shared.MovieActor Actor="@actor" />
-}
+<Divider />
+
+<MovieActors Actors="@_actors"></MovieActors>
 
 @code {
     [Parameter] public int Id { get; set; }
@@ -80,10 +85,10 @@
             if (userSaving == null)
             {
                 var saving = new PostSaving
-                {
-                    UserId = _userId.Value,
-                    MovieId = _movie.Id
-                };
+                    {
+                        UserId = _userId.Value,
+                        MovieId = _movie.Id
+                    };
                 await _savingService.PostSavingAsync(saving);
             }
             else
@@ -106,7 +111,7 @@
             var userSaving = _movie.Savings.FirstOrDefault(x => x.UserId == _userId && x.MovieId == _movie.Id);
             if (userSaving == null)
             {
-                _saveStyle = "";
+                _saveStyle = "not-saved";
             }
             else
             {
@@ -117,10 +122,20 @@
 
     private void Initialise()
     {
-        _movie = new GetMovie{Genres = new List<Genre>(), Country = new Country()};
-        _rate = new GetRate{Rates = new List<Rate>()};
+        _movie = new GetMovie { Genres = new List<Genre>(), Country = new Country(), Image = new byte[] { } };
+        _rate = new GetRate { Rates = new List<Rate>() };
         _actors = new List<Actor>();
         _reviews = new List<GetReview>();
         _user = new ClaimsPrincipal();
     }
 }
+
+<style>
+    .saved {
+        color: black;
+    }
+
+    .not-saved {
+        color: lightgray;
+    }
+</style>

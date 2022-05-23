@@ -1,24 +1,45 @@
 ﻿@inject IReviewLikeService _reviewLikeService
 @inject NavigationManager _navigation
 
-<Card>
+<Card Height="Height.Is100" @onclick="ShowModal" Class="review-cursor">
+    <CardHeader>@Review.UserName</CardHeader>
     <CardBody>
-        <CardHeader>@Review.UserName</CardHeader>
-        <CardText>
+        <CardText TextOverflow="TextOverflow.Truncate">
             @Review.Text
         </CardText>
-        <CardFooter>
+    </CardBody>
+    <CardFooter>
+        <Div Float="Float.Start" Display="Display.InlineBlock">
+            @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
+        </Div>
+        <Div Float="Float.End" Display="Display.InlineBlock">
+            <Icon Name="IconName.ThumbsUp" Class=@(_likeStyle + " " + "like-cursor") @onclick="() => LikeAsync(true)"></Icon>
+            <p class="@_likesCountStyle">@Review.LikesCount</p>
+            <Icon Name="IconName.ThumbsDown" Class=@(_dislikeStyle + " " + "like-cursor") @onclick="() => LikeAsync(false)"></Icon>
+        </Div>
+    </CardFooter>
+</Card>
+
+<Modal @ref="_modal">
+    <ModalContent Size="ModalSize.Default" Centered>
+        <ModalHeader>
+            @Review.UserName <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            @Review.Text
+        </ModalBody>
+        <ModalFooter>
             <Div Float="Float.Start" Display="Display.InlineBlock">
                 @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
             </Div>
             <Div Float="Float.End" Display="Display.InlineBlock">
-                <button class="fas fa-thumbs-up @_likeStyle" @onclick="() => LikeAsync(true)"></button>
+                <Icon Name="IconName.ThumbsUp" Class=@(_likeStyle + " " + "like-cursor") @onclick="() => LikeAsync(true)"></Icon>
                 <p class="@_likesCountStyle">@Review.LikesCount</p>
-                <button class="fas fa-thumbs-down @_dislikeStyle" @onclick="() => LikeAsync(false)"></button>
+                <Icon Name="IconName.ThumbsDown" Class=@(_dislikeStyle + " " + "like-cursor") @onclick="() => LikeAsync(false)"></Icon>
             </Div>
-        </CardFooter>
-    </CardBody>
-</Card>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
 
 @code {
     [Parameter] public GetReview Review { get; set; }
@@ -27,9 +48,10 @@
 
     private CultureInfo _ci = new CultureInfo("en-US");
     private Guid? _userId;
-    private string _likeStyle;
-    private string _dislikeStyle;
+    private string _likeStyle = "not-liked";
+    private string _dislikeStyle = "not-liked";
     private string _likesCountStyle;
+    private Modal _modal;
 
     protected override void OnInitialized()
     {
@@ -98,22 +120,57 @@
             var reviewLike = Review.Likes.FirstOrDefault(x => x.UserId == _userId && x.ReviewId == Review.Id);
             if (reviewLike == null)
             {
-                _likeStyle = "";
-                _dislikeStyle = "";
+                _likeStyle = "not-liked";
+                _dislikeStyle = "not-liked";
             }
             else
             {
                 if (reviewLike.Like)
                 {
                     _likeStyle = "like";
-                    _dislikeStyle = "";
+                    _dislikeStyle = "not-liked";
                 }
                 else
                 {
                     _dislikeStyle = "dislike";
-                    _likeStyle = "";
+                    _likeStyle = "not-liked";
                 }
             }
         }
     }
+
+    private void ShowModal()
+    {
+        _modal.Show();
+    }
 }
+
+<style>
+    .review-cursor {
+
+    }
+
+    .review-cursor:hover {
+        cursor: pointer;
+    }
+
+    .like-cursor {
+
+    }
+
+    .like-cursor:hover {
+        cursor: pointer;
+    }
+
+    .like {
+        color: green;
+    }
+
+    .dislike {
+        color: red;
+    }
+
+    .not-liked {
+        color: lightgray;
+    }
+</style>

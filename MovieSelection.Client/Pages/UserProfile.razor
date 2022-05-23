@@ -4,7 +4,7 @@
 @inject ISavingService _savingService
 @inject IMovieService _movieService
 
-<h1>Hello @_user.Identity?.Name</h1>
+<h2>Hello, @_user.Identity?.Name!</h2>
 
 <Tabs SelectedTab="@_selectedTab" SelectedTabChanged="@OnSelectedTabChangedAsync" RenderMode="TabsRenderMode.LazyReload">
     <Items>
@@ -13,30 +13,37 @@
     </Items>
     <Content>
         <TabPanel Name="savings">
-            <DropContainer TItem="GetSaving" Items="@_savings" ItemsFilter="@((item, dropZone) => (item.IsWatched ? _watched : _willWatch) == dropZone)" ItemDropped="@ItemDroppedAsync" Flex="Flex.Wrap.Grow.Is1">
+            <DropContainer TItem="GetSaving" Items="@_savings" ItemsFilter="@((item, dropZone) => (item.IsWatched ? _watched : _willWatch) == dropZone)"
+                           ItemDropped="@ItemDroppedAsync" Display="Display.Flex">
                 <ChildContent>
-                    <DropZone TItem="GetSaving" Name="@_willWatch" DropAllowed="@((item) => item.IsWatched)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-                        <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_willWatch</Heading>
+                     <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_willWatch</Heading>
+                    <DropZone TItem="GetSaving" Name="@_willWatch" DropAllowed="@((item) => item.IsWatched)" Border="Border.Rounded" Background="Background.Light"
+                              Margin="Margin.Is3" style="width:50%" Class="row row-cols-1 row-cols-md-2 g-3">
                     </DropZone>
-                    <DropZone TItem="GetSaving" Name="@_watched" DropAllowed="@((item) => !item.IsWatched)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-                        <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_watched</Heading>
+                    <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">@_watched</Heading>
+                    <DropZone TItem="GetSaving" Name="@_watched" DropAllowed="@((item) => !item.IsWatched)" Border="Border.Rounded" Background="Background.Light"
+                              Margin="Margin.Is3" style="width:50%" Class="row row-cols-1 row-cols-md-2 g-3">
                     </DropZone>
                 </ChildContent>
                 <ItemTemplate>
-                    <CardDeck>
+                    <Div Class="col">
                         <MovieCard Movie="@context.Movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
-                    </CardDeck>
+                    </Div>
                 </ItemTemplate>
             </DropContainer>
         </TabPanel>
         <TabPanel Name="rates">
-            <MovieFilter @bind-Movies="@_rateMovies" AllMovies="@_allRateMovies"></MovieFilter>
-            <CardDeck>
+            <div style="margin-bottom:10px">
+                <MovieFilter @bind-Movies="@_rateMovies" AllMovies="@_allRateMovies"></MovieFilter>
+            </div>
+            <div class="row row row-cols-1 row-cols-sm-2 row-cols-md-4  row-cols-xl-6 g-3">
                 @foreach (var movie in _rateMovies)
                 {
-                    <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+                    <div class="col">
+                        <MovieCard Movie="@movie" User="@_user" OnSave="OnSavedAsync"></MovieCard>
+                    </div>
                 }
-            </CardDeck>
+            </div>
         </TabPanel>
     </Content>
 </Tabs>
@@ -69,8 +76,12 @@
     protected virtual async Task OnSavedAsync(int movieId)
     {
         var getMovie = await _movieService.GetMovieAsync(movieId);
-        var movie = _rateMovies.First(x => x.Id == movieId);
-        movie.Savings = getMovie.Savings.ToList();
+        var movie = _rateMovies.FirstOrDefault(x => x.Id == movieId);
+        if (movie != null)
+        {
+            movie.Savings = getMovie.Savings.ToList();
+        }
+        _savings = await _userService.GetSavingsAsync(_id);
     }
 
     private async Task OnSelectedTabChangedAsync(string name)
@@ -87,12 +98,12 @@
         var getSaving = saving.Item;
         getSaving.IsWatched = saving.DropZoneName == _watched;
         var putSaving = new PutSaving
-        {
-            Id = getSaving.Id,
-            IsWatched = getSaving.IsWatched,
-            MovieId = getSaving.Movie.Id,
-            UserId = _id
-        };
+            {
+                Id = getSaving.Id,
+                IsWatched = getSaving.IsWatched,
+                MovieId = getSaving.Movie.Id,
+                UserId = _id
+            };
         await _savingService.PutReviewLikeAsync(putSaving);
     }
 

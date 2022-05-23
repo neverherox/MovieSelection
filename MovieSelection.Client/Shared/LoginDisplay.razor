@@ -4,7 +4,7 @@
 <AuthorizeView>
     <Authorized>
         <Link To=@($"user-profile/{context.User.Claims.FirstOrDefault(x => x.Type == "sub")?.Value}")>
-            <Image Source=@(context.User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value ?? "logos/person.svg") Style="width:30px"/>
+            <Image Source=@(context.User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value ?? "logos/person.svg") Class="rounded-circle profile" Border="Border.Is1"/>
         </Link>
         <Button Color="Color.Link" @onclick="BeginSignOut">Log out</Button>
     </Authorized>
@@ -20,3 +20,12 @@
         Navigation.NavigateTo("authentication/logout");
     }
 }
+
+<style>
+    .profile {
+        width:30px;
+        height: 30px;
+        object-fit:cover;
+        object-position:50% 50%;
+    }
+</style>

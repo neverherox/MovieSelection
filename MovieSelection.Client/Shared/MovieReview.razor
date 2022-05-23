@@ -1,9 +1,9 @@
 ﻿@inject IReviewLikeService _reviewLikeService
 @inject NavigationManager _navigation
 
-<Card Height="Height.Is100" @onclick="ShowModal" Class="review-cursor">
+<Card Height="Height.Is100">
     <CardHeader>@Review.UserName</CardHeader>
-    <CardBody>
+    <CardBody @onclick="ShowModal" Class="review-cursor">
         <CardText TextOverflow="TextOverflow.Truncate">
             @Review.Text
         </CardText>
@@ -29,10 +29,10 @@
             @Review.Text
         </ModalBody>
         <ModalFooter>
-            <Div Float="Float.Start" Display="Display.InlineBlock">
+            <Div Float="Float.Start" Display="Display.InlineBlock" Width="Width.Is100">
                 @Review.ReviewDate.Date.ToString("dd MMMM yyyy", _ci)
             </Div>
-            <Div Float="Float.End" Display="Display.InlineBlock">
+            <Div Float="Float.Start" Display="Display.InlineBlock" Position="Position.Absolute">
                 <Icon Name="IconName.ThumbsUp" Class=@(_likeStyle + " " + "like-cursor") @onclick="() => LikeAsync(true)"></Icon>
                 <p class="@_likesCountStyle">@Review.LikesCount</p>
                 <Icon Name="IconName.ThumbsDown" Class=@(_dislikeStyle + " " + "like-cursor") @onclick="() => LikeAsync(false)"></Icon>

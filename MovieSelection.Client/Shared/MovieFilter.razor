@@ -63,6 +63,7 @@
     private IEnumerable<GetGenre> _genres;
     private IEnumerable<Genre> _subgenres;
     private IEnumerable<Country> _countries;
+    public IEnumerable<GetMovie> _allMovies { get; set; }
     private bool _isSubgenresDisabled = true;
 
     protected override async Task OnInitializedAsync()
@@ -76,8 +77,16 @@
             _subgenres = selectedGenre.Subgenres;
             _isSubgenresDisabled = !_subgenres.Any();
         }
-        Movies = _movieFilterService.ApplyFilters(AllMovies);
-        await MoviesChanged.InvokeAsync(Movies);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AllMovies != _allMovies)
+        {
+            _allMovies = AllMovies;
+            Movies = _movieFilterService.ApplyFilters(AllMovies);
+            await MoviesChanged.InvokeAsync(Movies);
+        }
     }
 
     private void OnGenreSelected(int selectedGenreId)

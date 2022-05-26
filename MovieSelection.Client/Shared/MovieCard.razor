@@ -3,16 +3,16 @@
 @inject IMovieService _movieService
 
 <Card Height="Height.Is100">
-    <CardImage Source=@("data:image/png;base64," + Convert.ToBase64String(Movie.Image)) Style="height:65%"/>
+    <CardImage Source=@Movie.Image Style="height:65%"/>
     <CardBody Style="height:35%" TextOverflow="TextOverflow.Truncate">
         <CardTitle Size="5">
             <a href=@($"/movie/{Movie.Id}")>@Movie.Name</a>
-            <Icon Name="IconName.Bookmark" Class=@(_saveStyle + " " + "save-cursor") @onclick="() => SaveMovieAsync()" Style="float:right" />
         </CardTitle>
         <CardSubtitle Size="5">
             <div>
                 <img src="logos/MovieCard/rating.svg">
                 <span>@Math.Round(_rate.Value, 1)</span>
+                <Icon Name="IconName.Bookmark" Class=@(_saveStyle + " " + "save-cursor") @onclick="() => SaveMovieAsync()" Style="float:right" />
             </div>
         </CardSubtitle>
         <CardText Class="lh-sm" TextOverflow="TextOverflow.Truncate">

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieSelection.Data.Context;
 
@@ -11,9 +12,10 @@ using MovieSelection.Data.Context;
 namespace MovieSelection.Data.Migrations
 {
     [DbContext(typeof(MovieSelectionContext))]
-    partial class MovieSelectionContextModelSnapshot : ModelSnapshot
+    [Migration("20220526114219_MakeMovieImageString")]
+    partial class MakeMovieImageString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -16,7 +16,7 @@ namespace MovieSelection.Models.RequestModels
 
         public IEnumerable<Genre> Genres { get; set; }
 
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
 
         public double Rate { get; set; }
 

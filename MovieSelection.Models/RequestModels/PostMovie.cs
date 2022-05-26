@@ -12,6 +12,6 @@ namespace MovieSelection.Models.RequestModels
 
         public int CountryId { get; set; }
 
-        public IFormFile Image { get; set; }
+        public string Image { get; set; }
     }
 }

@@ -24,16 +24,7 @@ namespace MovieSelection.Api.Profiles
                 .ForMember(dest => dest.CountryId,
                     opt => opt.MapFrom(src => src.CountryId))
                 .ForMember(dest => dest.Image,
-                    opt => opt.MapFrom(src => GetImage(src)));
-        }
-
-        private byte[] GetImage(PostMovie movie)
-        {
-            using (var ms = new MemoryStream())
-            {
-                movie.Image.CopyTo(ms);
-                return ms.ToArray();
-            }
+                    opt => opt.MapFrom(src => src.Image));
         }
     }
 }

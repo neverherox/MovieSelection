@@ -8,5 +8,5 @@ public class Actor
 
     public string LastName { get; set; }
 
-    public byte[] Image { get; set; }
+    public string Image { get; set; }
 }

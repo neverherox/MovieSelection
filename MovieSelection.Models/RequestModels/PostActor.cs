@@ -8,6 +8,6 @@ namespace MovieSelection.Models.RequestModels
 
         public string LastName { get; set; }
 
-        public IFormFile Image { get; set; }
+        public string Image { get; set; }
     }
 }

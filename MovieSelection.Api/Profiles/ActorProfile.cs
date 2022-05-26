@@ -20,16 +20,7 @@ namespace MovieSelection.Api.Profiles
                 .ForMember(dest => dest.LastName,
                     opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.Image,
-                    opt => opt.MapFrom(src => GetImage(src)));
-        }
-
-        private byte[] GetImage(PostActor actor)
-        {
-            using (var ms = new MemoryStream())
-            {
-                actor.Image.CopyTo(ms);
-                return ms.ToArray();
-            }
+                    opt => opt.MapFrom(src => src.Image));
         }
     }
 }
